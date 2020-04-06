@@ -5,6 +5,8 @@ from scrapy.linkextractors import LinkExtractor
 import spacy
 # from spacy.symbols import ORTH
 from spacy.tokens import Token
+from spacy.lang.en import English # updated
+
 Token.set_extension('tag', default=False)
 
 def create_custom_tokenizer(nlp):
@@ -37,9 +39,11 @@ class UrlExtractor(Spider):
     name = 'url-extractor'
     start_urls = []
     index = 0
-    nlp = spacy.load("en_core_web_sm", vectors=False, parser=False, entity=False)
-    tokenizer = create_custom_tokenizer(nlp)
-    nlp.tokenizer = tokenizer
+    # nlp = spacy.load("en_core_web_sm", vectors=False, parser=False, entity=False)
+    # tokenizer = create_custom_tokenizer(nlp)
+    # nlp.tokenizer = tokenizer
+    nlp = English()
+    nlp.add_pipe(nlp.create_pipe('sentencizer'))
 
     def __init__(self, root=None, depth=0, *args, **kwargs):
         self.logger.info("[LE] Source: %s Depth: %s Kwargs: %s", root, depth, kwargs)
@@ -64,14 +68,26 @@ class UrlExtractor(Spider):
 
     def parse_req(self, response):
         # see request result
-        print("THE URL: ", response.url)
+        # print("THE URL: ", response.url)
+        title = response.xpath('//title//text()').extract()[0].strip()
+        # title = title.replace("</title>", "").replace("<title>", "").strip()
+
+        # print('THE TITLE: ', title)
         #print("THE CONTENT: ", response.text)
-        with open("genericWebCrawler/out_htmls/"+ str(self.index) +".txt", 'w', encoding="utf-8") as out_html:
+        with open("genericWebCrawler/out_htmls/"+ title +".txt", 'w', encoding="utf-8") as out_html:
             self.index += 1
-            doc = self.nlp(response.text)
-            # for entry in doc:
-            #     out_html.write(entry.text)
-            out_html.write(str([entry.text for entry in doc]))
+            # select all texts between tags except script tags:
+            temp =  response.xpath('//*[not(self::script)]/text()[re:test(., "\w+")]').extract()
+            for string in temp:
+                doc = self.nlp(string)
+                sentences = [sent.string.strip() for sent in doc.sents]
+                for sentence in sentences:
+                    #print(sentence.strip())
+                    out_html.write(sentence.strip()+"\n")
+            # doc = self.nlp(response.text)
+                # for entry in doc:
+                #     out_html.write(entry.text)
+            # out_html.write(str([entry.text for entry in doc]))
 
 
 

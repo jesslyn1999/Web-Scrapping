@@ -1,0 +1,149 @@
+Tentang Kami - Beritajakarta.id
+.layout-container {display:none;}
+You don't have javascript enabled.
+Good luck with that.
+beritajakarta
+.id
+Indeks
+Berita Utama
+Terpopuler
+English
+DPRD
+BUMD
+KATEGORI
+Pemerintahan
+Ekonomi
+Pembangunan
+Kesra
+LAINNYA
+Berita Wilayah
+Jakarta Pusat
+Jakarta Utara
+Jakarta Barat
+Jakarta Selatan
+Jakarta Timur
+Kepulauan Seribu
+Video
+Agenda Kegiatan
+Potret Jakarta
+Potret Wilayah
+Pemberdayaan Perempuan
+Lenggang Jakarta
+Infografis
+Info Pangan
+Media Jaya
+Tentang Kami
+Beranda
+/ tentang kami
+<!--
+/* Font Definitions */
+@font-face
+	{font-family:Arial;
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-536859905 -1073711037 9 0 511 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1107305727 0 0 415 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:-536870145 1073786111 1 0 415 0;}
+ /* Style Definitions */
+p.
+MsoNormal, li.
+MsoNormal, div.
+MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:10.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	mso-pagination:widow-orphan;
+	font-size:11.0pt;
+	font-family:Calibri;
+	mso-fareast-font-family:Calibri;
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+p
+	{mso-style-priority:99;
+	mso-margin-top-alt:auto;
+	margin-right:0cm;
+	mso-margin-bottom-alt:auto;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-default-props:yes;
+	font-size:10.0pt;
+	mso-ansi-font-size:10.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Calibri;
+	mso-ascii-font-family:Calibri;
+	mso-fareast-font-family:Calibri;
+	mso-hansi-font-family:Calibri;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;
+	mso-header-margin:36.0pt;
+	mso-footer-margin:36.0pt;
+	mso-paper-source:0;}
+div.
+WordSection1
+	{page:WordSection1;}
+-->
+Beritajakarta
+hadir sebagai salah satu kanal pelayanan informasi kepada masyarakat yang
+dilakukan Pemerintah Provinsi (Pemprov) DKI Jakarta melalui Dinas Komunikasi,
+Informatika dan Statistik.
+Berawal pada
+tahun 2000, mengemuka ide untuk menyediakan pelayanan informasi kepada
+masyarakat secara cepat.
+Dari ide tersebut kemudian disepakati untuk membuat
+sebuah situs berita khusus Pemprov DKI Jakarta dan DPRD DKI Jakarta.
+Pemilihan nama situs dilakukan dan tercetus nama Beritajakarta dengan
+alamat website
+www.beritajakarta.com.
+Kemudian pada tahun 2017 berubah
+menjadi www.beritajakarta.id.
+dengan mengacu pada peraturan yang
+berlaku.
+Dan nama inilah yang saat ini menjadi situs berita resmi Pemprov DKI
+Jakarta.
+Beritajakarta terus berupaya memberikan pelayanan informasi seputar
+Pemprov DKI Jakarta, Dewan Perwakilan Rakyat Daerah DKI Jakarta, Badan Usaha
+Milik Daerah dan informasi dari instansi terkait lainnya secara cepat dan
+profesional.
+Dalam perjalanannya, Beritajakarta melakukan berbagai perubahan dan
+pengembangan.
+Diantaranya perubahan logo, tampilan, penambahan fitur dan
+pembuatan aplikasi untuk telepon pintar, sehingga semakin mempermudah masyarakat
+mengakses Beritajakarta.
+Ke depan, Beritajakarta akan terus memberikan pelayanan informasi secara
+profesional seputar Pemprov DKI Jakarta dan DPRD DKI Jakarta.
+Beritajakarta, untuk Jakarta.
+follow us on:
+Copyright © 2001 - 2020 Beritajakarta.id
+Website Berita Resmi Pemprov DKI Jakarta
+Jl.
+Merdeka Selatan 8-9 Blok F Lantai II, Jakarta Indonesia Telp.
++62 21 3822488; Fax.
++62 21 3822846; Email : redaksi[at]beritajakarta.com
+Pencarian
+Go
