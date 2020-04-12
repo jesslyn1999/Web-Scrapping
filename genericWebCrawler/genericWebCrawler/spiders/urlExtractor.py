@@ -94,18 +94,20 @@ class UrlExtractor(Spider):
             self.index += 1
             # select all texts between tags except script tags:
             temp =  response.xpath('//*[not(self::script)]/text()[re:test(., "\w+")]').extract()
-            content = ''
+
+            listOfSentences = []
             for string in temp:
                 doc = self.nlp(string)
                 sentences = [sent.string.strip() for sent in doc.sents]
+                listOfSentences.extend(sentences)
 
                 for sentence in sentences:
                     #print(sentence.strip())
-                    content += sentence.strip()+"\n"
+
                     out_html.write(sentence.strip()+"\n")
 
             # accumulate result:
-            globalResult.append((title,response.meta['url'],content))
+            globalResult.append((title,response.meta['url'],listOfSentences))
 
         all_urls = []
         if int(response.meta['depth']) <= int(self.depth):
