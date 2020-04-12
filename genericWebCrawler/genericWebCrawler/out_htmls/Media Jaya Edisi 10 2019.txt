@@ -1,0 +1,40 @@
+Media Jaya Edisi 10 2019
+/*<![CDATA[*/
+html,
+body
+{
+ height:100%;
+ margin: 0px;
+ overflow:hidden;
+}
+
+body
+{
+ margin:0;
+ padding:0;
+ overflow:auto;
+ text-align:center;
+ background-color: #ffffff;
+}
+
+#flashContent
+{
+ display:none;
+}
+/*]]>*/
+To view this page ensure that Adobe Flash Player version 10.0.0
+or greater is installed.
+Besides, it's possible to
+view a simplified version of the flippdf book on any device
+,
+or you can view flippdf
+mobile version
+Either scripts and active content are not permitted to run or
+Adobe Flash Player version 10.0.0 or greater is not installed.
+Get Adobe Flash Player
+Besides, it's possible to
+view a simplified version of the flippdf book on any device
+,
+or you can view flippdf
+mobile version
+Pages

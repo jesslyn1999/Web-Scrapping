@@ -7,8 +7,22 @@ import spacy
 from spacy.tokens import Token
 from spacy.lang.en import English # updated
 
-Token.set_extension('tag', default=False)
+import scrapy
+from scrapy.crawler import CrawlerProcess
+import sys
 
+globalResult = []
+
+def loadScraper(_root, _allowed_domains, _depth):
+    global globalResult
+
+    process = CrawlerProcess({})
+    spider_cls = UrlExtractor
+    process.crawl(spider_cls, root=_root, allow_domains=_allowed_domains, depth=_depth)
+    process.start() # the script will block here until the crawling is finished
+    return globalResult
+
+Token.set_extension('tag', default=False)
 def create_custom_tokenizer(nlp):
     from spacy import util
     from spacy.tokenizer import Tokenizer
@@ -36,6 +50,8 @@ def create_custom_tokenizer(nlp):
 
 
 class UrlExtractor(Spider):
+    global globalResult
+
     name = 'url-extractor'
     start_urls = []
     index = 0
@@ -64,7 +80,7 @@ class UrlExtractor(Spider):
         super(UrlExtractor, self).__init__(*args, **kwargs)
 
     def start_requests(self, *args, **kwargs):
-        yield Request('%s' % self.source, callback=self.parse_req)
+        yield Request('%s' % self.source, callback=self.parse_req, meta={'url': self.source})
 
     def parse_req(self, response):
         # see request result
@@ -78,24 +94,24 @@ class UrlExtractor(Spider):
             self.index += 1
             # select all texts between tags except script tags:
             temp =  response.xpath('//*[not(self::script)]/text()[re:test(., "\w+")]').extract()
+            content = ''
             for string in temp:
                 doc = self.nlp(string)
                 sentences = [sent.string.strip() for sent in doc.sents]
+
                 for sentence in sentences:
                     #print(sentence.strip())
+                    content += sentence.strip()+"\n"
                     out_html.write(sentence.strip()+"\n")
-            # doc = self.nlp(response.text)
-                # for entry in doc:
-                #     out_html.write(entry.text)
-            # out_html.write(str([entry.text for entry in doc]))
 
-
+            # accumulate result:
+            globalResult.append((title,response.meta['url'],content))
 
         all_urls = []
         if int(response.meta['depth']) <= int(self.depth):
             all_urls = self.get_all_links(response)
             for url in all_urls:
-                yield Request('%s' % url, callback=self.parse_req)
+                yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
         if len(all_urls) > 0:
             for url in all_urls:
                 yield dict(link=url, meta=dict(source=self.source, depth=response.meta['depth']))
