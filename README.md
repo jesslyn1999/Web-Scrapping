@@ -1,11 +1,9 @@
 # GenericWebCrawlerPrototype
 
-Run these commands in GenericWebCrawlerPrototype directory: (change "py" into whatever name you associate python with in your terminal):
-1. install spaCy NLP model:
-    - py -m spacy download en_core_web_sm
-2. Crawl a website with depth = 0:
-    - py -m scrapy crawl url-extractor -a root=<WEBSITE ROOT URL> -a allow_domains=<DOMAIN NAME> -a depth=0 -a allow=<ALLOWED ROUTE> 
-    NOTE: ("Allowed route is an optional param")
-        - Example: py -m scrapy crawl url-extractor -a root=https://www.kompas.com/ -a allow_domains="kompas.com" -a depth=0
-            
-This is still a prototype.
+This repository contains the code for the prototype of webcrawler for P3MI e-Democracy Data Integration project.
+
+To try the demo, run the following script:
+```bash
+$ MONGODB_URI=<MongoDB URI> python crawl.py
+```
+Replace `MongoDB URI` with actual connection parameter, e.g. `mongodb://localhost:27017/`
