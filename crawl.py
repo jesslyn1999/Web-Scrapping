@@ -8,8 +8,8 @@ def start_scraping_job(root_url, allowed_domains=None, depth=1):
 
     crawl_results = []
     for result in results:
-        title, url, sentences = result
-        crawl_result = CrawlResult(title=title, url=url, sentences=sentences)
+        title, url, sentences, links = result
+        crawl_result = CrawlResult(title=title, url=url, sentences=sentences, links=links)
         crawl_results.append(crawl_result.__dict__)
 
     insertion_result = crawl_result_collection.insert_many(crawl_results)

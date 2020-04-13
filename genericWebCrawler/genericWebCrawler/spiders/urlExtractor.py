@@ -52,12 +52,13 @@ def create_crawler_class():
                 sentences = [sent.string.strip() for sent in doc.sents]
                 listOfSentences.extend(sentences)
 
+            all_urls = self.get_all_links(response)
+
             # accumulate result:
-            results.append((title, response.meta['url'], listOfSentences))
+            results.append((title, response.meta['url'], listOfSentences, all_urls))
 
             all_urls = []
             if int(response.meta['depth']) <= int(self.depth):
-                all_urls = self.get_all_links(response)
                 for url in all_urls:
                     yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
             if len(all_urls) > 0:
