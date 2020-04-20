@@ -2,8 +2,8 @@ from genericWebCrawler.genericWebCrawler.spiders.crawler import loadScraper
 from db.models import CrawlResult
 from db.db import crawl_result_collection
 
-def start_scraping_job(root_url, allowed_domains=None, depth=1):
-    allowed_domains = (",".join(allowed_domains)) if allowed_domains else '*'
+def start_scraping_job(root_url, allowed_domains=None, depth=0):
+    allowed_domains = (",".join(allowed_domains)) if allowed_domains else ''
     results = loadScraper(root_url, allowed_domains, depth)
 
     crawl_results = []
@@ -19,4 +19,4 @@ def start_scraping_job(root_url, allowed_domains=None, depth=1):
 
 
 if (__name__ == '__main__'):
-    start_scraping_job("https://www.itb.ac.id")
+    start_scraping_job("https://www.itb.ac.id/wisuda")

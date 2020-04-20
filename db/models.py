@@ -6,5 +6,4 @@ class CrawlResult:
         self.url = url
         self.sentences = sentences
         self.id = id
-        self.links = links
-
+        self.links = list(links)
