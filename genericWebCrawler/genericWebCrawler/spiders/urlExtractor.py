@@ -4,7 +4,7 @@ from scrapy.linkextractors import LinkExtractor
 from spacy.tokens import Token
 from spacy.lang.en import English # updated
 from urllib.parse import urlparse
-from w3lib.html import remove_tags
+# from w3lib.html import remove_tags
 from bs4 import BeautifulSoup
 # Faster alternative? :
 # from nltk import tokenize
@@ -89,14 +89,11 @@ def create_crawler_class():
 
             listOfSentences = []
             for child in p_children:
-                # string = remove_tags(child)
                 child = child.get_text()
                 string = child.strip()
-                # print(string)
                 doc = self.nlp(string)
+                # remove excess middle whitespaces & minimum 10 chars to be considered as a sentence
                 sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents if len(sent.string.strip()) > 10 ]
-                # print(sentences)
-                # sentences = tokenize.sent_tokenize(string)
                 listOfSentences.extend(sentences)
 
             all_urls = self.get_all_links(response)
