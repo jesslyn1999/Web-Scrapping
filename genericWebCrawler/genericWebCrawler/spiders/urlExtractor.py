@@ -4,6 +4,8 @@ from scrapy.linkextractors import LinkExtractor
 from spacy.tokens import Token
 from spacy.lang.en import English # updated
 from urllib.parse import urlparse
+from w3lib.html import remove_tags
+from bs4 import BeautifulSoup
 # Faster alternative? :
 # from nltk import tokenize
 # have to download punkt: python -m nltk.downloader 'punkt' OR go to python shell and type 'nltk.download('punkt')
@@ -15,7 +17,6 @@ def create_crawler_class():
     class UrlExtractor(Spider):
         name = 'url-extractor'
         start_urls = []
-        index = 0
         nlp = English()
         nlp.add_pipe(nlp.create_pipe('sentencizer'))
 
@@ -51,21 +52,49 @@ def create_crawler_class():
         def start_requests(self, *args, **kwargs):
             yield Request('%s' % self.source, callback=self.parse_req, meta={'url': self.source})
 
+        def tag_visible(element):
+            if element.parent.name in ['a', 'style', 'script', 'head', 'title', 'meta', '[document]']:
+                return False
+            if isinstance(element, Comment):
+                return False
+            return True
+
         def parse_req(self, response):
             # see request result
             # print("THE URL: ", response.url)
+            # print("RESPONSE: ")
+            # print(response)
+            # response("<em> <td> Halo, </td> aku text outlier </em>")
             title = response.xpath('//title//text()').extract()[0].strip()
 
-            self.index += 1
             # select all texts between <p> tags except script tags: (double // to select all children too)
-            temp = response.xpath('//*[not(self::script) and not(self::a)]/p/text()[re:test(., "\w+")]').extract()
+            bsoup = BeautifulSoup(response.text, 'html.parser')
+            # remove <a> tags
+            a_tags = bsoup.find_all('a')
+            for a in a_tags:
+                a.decompose()
+            # remove <script> tags
+            script_tags = bsoup.find_all('script')
+            for s in script_tags:
+                s.decompose()
+
+            p_children = bsoup.find_all('p')
+            # p_filtered = filter(self.tag_visible, p_children)
+            # p_filtered =  u" ".join(t.strip() for t in p_filtered)
+            # response = soup.xpath('//*[not(self::script) and not(self::a)]').extract()
+            # p_children = response.xpath('//*[not(self::script) and not(self::a)]/p').extract()
+            # print("P_CHILDREN: ", p_children)
+            # temp = response.xpath('//*[not(self::script) and not(self::a)]/p/text()[re:test(., "\w+")]').extract()
+
 
             listOfSentences = []
-            for string in temp:
-                string = string.strip()
+            for child in p_children:
+                # string = remove_tags(child)
+                child = child.get_text()
+                string = child.strip()
                 # print(string)
                 doc = self.nlp(string)
-                sentences = [sent.string.strip() for sent in doc.sents]
+                sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents if len(sent.string.strip()) > 10 ]
                 # print(sentences)
                 # sentences = tokenize.sent_tokenize(string)
                 listOfSentences.extend(sentences)
@@ -75,12 +104,13 @@ def create_crawler_class():
             # accumulate result:
             results.append((title, response.meta['url'], listOfSentences, all_urls))
 
+            print("DEPTH :", int(response.meta['depth']))
             if int(response.meta['depth']) < int(self.depth):
                 for url in all_urls:
                     yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
-            if len(all_urls) > 0:
-                for url in all_urls:
-                    yield dict(link=url, meta=dict(source=self.source, depth=response.meta['depth']))
+                if len(all_urls) > 0:
+                    for url in all_urls:
+                        yield dict(link=url, meta=dict(source=self.source, depth=response.meta['depth']))
 
         def get_all_links(self, response):
             links = self.le.extract_links(response)
