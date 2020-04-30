@@ -125,4 +125,4 @@ def create_crawler_class():
                 else:
                     self.options[key] = self.options.get(key).split(',')
 
-    return (results, UrlExtractor)
+    return results, UrlExtractor

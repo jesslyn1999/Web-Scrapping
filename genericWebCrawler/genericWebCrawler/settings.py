@@ -8,11 +8,16 @@
 #     https://doc.scrapy.org/en/latest/topics/settings.html
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
+import os
 
 BOT_NAME = 'genericWebCrawler'
 
-SPIDER_MODULES = ['genericWebCrawler.spiders']
-NEWSPIDER_MODULE = 'genericWebCrawler.spiders'
+SPIDER_MODULES = ['genericWebCrawler.genericWebCrawler.spiders']
+NEWSPIDER_MODULE = 'genericWebCrawler.genericWebCrawler.spiders'
+ITEM_PIPELINES = {
+    'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.MongoPipeline': 300,
+}
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -20,6 +25,12 @@ NEWSPIDER_MODULE = 'genericWebCrawler.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+MONGODB_SERVER = "localhost"
+MONGODB_PORT = 27017
+MONGODB_DB = "crawler_db"
+MONGODB_COLLECTION = "crawl_result"
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

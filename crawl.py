@@ -12,10 +12,10 @@ def start_scraping_job(root_url, allowed_domains=None, depth=0):
         crawl_result = CrawlResult(title=title, url=url, sentences=sentences, links=links)
         crawl_results.append(crawl_result.__dict__)
 
-    insertion_result = crawl_result_collection.insert_many(crawl_results)
+    # insertion_result = crawl_result_collection.insert_many(crawl_results)
 
-    print("Inserted scraping result to DB")
-    print(insertion_result)
+    # print("Inserted scraping result to DB")
+    # print(insertion_result)
 
 
 if (__name__ == '__main__'):
