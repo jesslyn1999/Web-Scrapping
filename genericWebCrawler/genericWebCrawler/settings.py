@@ -18,6 +18,7 @@ ITEM_PIPELINES = {
     'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.MongoPipeline': 300,
 }
+LOG_LEVEL = 'INFO'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -27,8 +28,6 @@ ITEM_PIPELINES = {
 ROBOTSTXT_OBEY = True
 
 MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
-MONGODB_SERVER = "localhost"
-MONGODB_PORT = 27017
 MONGODB_DB = "crawler_db"
 MONGODB_COLLECTION = "crawl_result"
 

@@ -18,5 +18,5 @@ def start_scraping_job(root_url, allowed_domains=None, depth=0):
     # print(insertion_result)
 
 
-if (__name__ == '__main__'):
+if __name__ == '__main__':
     start_scraping_job("https://www.itb.ac.id/wisuda")

@@ -6,6 +6,7 @@ from spacy.lang.en import English # updated
 from urllib.parse import urlparse
 # from w3lib.html import remove_tags
 from bs4 import BeautifulSoup
+from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
 # Faster alternative? :
 # from nltk import tokenize
 # have to download punkt: python -m nltk.downloader 'punkt' OR go to python shell and type 'nltk.download('punkt')
@@ -55,7 +56,7 @@ def create_crawler_class():
         def tag_visible(element):
             if element.parent.name in ['a', 'style', 'script', 'head', 'title', 'meta', '[document]']:
                 return False
-            if isinstance(element, Comment):
+            if isinstance(element, Comment):  # TODO: WHY Comment UNDEFINED ?
                 return False
             return True
 
@@ -101,13 +102,19 @@ def create_crawler_class():
             # accumulate result:
             results.append((title, response.meta['url'], listOfSentences, all_urls))
 
-            print("DEPTH :", int(response.meta['depth']))
             if int(response.meta['depth']) < int(self.depth):
                 for url in all_urls:
                     yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
                 if len(all_urls) > 0:
                     for url in all_urls:
                         yield dict(link=url, meta=dict(source=self.source, depth=response.meta['depth']))
+
+            item = GenericwebcrawlerItem()
+            item['title'] = title
+            item['url'] = response.meta['url']
+            item['sentences'] = listOfSentences
+            item['links'] = list(all_urls)
+            yield item
 
         def get_all_links(self, response):
             links = self.le.extract_links(response)
