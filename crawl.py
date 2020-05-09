@@ -19,4 +19,4 @@ def start_scraping_job(root_url, allowed_domains=None, depth=0):
 
 
 if __name__ == '__main__':
-    start_scraping_job("https://www.itb.ac.id/wisuda")
+    start_scraping_job("https://www.ui.ac.id", depth=1)

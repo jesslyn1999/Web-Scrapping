@@ -7,6 +7,8 @@ from urllib.parse import urlparse
 # from w3lib.html import remove_tags
 from bs4 import BeautifulSoup
 from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
+from genericWebCrawler.genericWebCrawler.parser import parsers
+
 # Faster alternative? :
 # from nltk import tokenize
 # have to download punkt: python -m nltk.downloader 'punkt' OR go to python shell and type 'nltk.download('punkt')
@@ -61,53 +63,19 @@ def create_crawler_class():
             return True
 
         def parse_req(self, response):
-            # see request result
-            # print("THE URL: ", response.url)
-            # print("RESPONSE: ")
-            # print(response)
-            # response("<em> <td> Halo, </td> aku text outlier </em>")
-            title = response.xpath('//title//text()').extract()[0].strip()
+            (title, url, listOfSentences, all_urls) = parsers.parse(response.url, response)
 
-            # select all texts between <p> tags except script tags: (double // to select all children too)
-            bsoup = BeautifulSoup(response.text, 'html.parser')
-            # remove <a> tags
-            a_tags = bsoup.find_all('a')
-            for a in a_tags:
-                a.decompose()
-            # remove <script> tags
-            script_tags = bsoup.find_all('script')
-            for s in script_tags:
-                s.decompose()
-
-            p_children = bsoup.find_all('p')
-            # p_filtered = filter(self.tag_visible, p_children)
-            # p_filtered =  u" ".join(t.strip() for t in p_filtered)
-            # response = soup.xpath('//*[not(self::script) and not(self::a)]').extract()
-            # p_children = response.xpath('//*[not(self::script) and not(self::a)]/p').extract()
-            # print("P_CHILDREN: ", p_children)
-            # temp = response.xpath('//*[not(self::script) and not(self::a)]/p/text()[re:test(., "\w+")]').extract()
-
-
-            listOfSentences = []
-            for child in p_children:
-                child = child.get_text()
-                string = child.strip()
-                doc = self.nlp(string)
-                # remove excess middle whitespaces & minimum 10 chars to be considered as a sentence
-                sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents if len(sent.string.strip()) > 10 ]
-                listOfSentences.extend(sentences)
-
-            all_urls = self.get_all_links(response)
-            self.traversedLinks = self.traversedLinks|all_urls
-            # accumulate result:
-            results.append((title, response.meta['url'], listOfSentences, all_urls))
+            results.append((title, url, listOfSentences, all_urls))
+            non_traversed_urls = all_urls.difference(self.traversedLinks)
+            self.traversedLinks = self.traversedLinks | all_urls
 
             if int(response.meta['depth']) < int(self.depth):
-                for url in all_urls:
+                for url in non_traversed_urls:
+                    print("Traversing", url)
                     yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
-                if len(all_urls) > 0:
-                    for url in all_urls:
-                        yield dict(link=url, meta=dict(source=self.source, depth=response.meta['depth']))
+                if len(non_traversed_urls) > 0:
+                    for url in non_traversed_urls:
+                        yield dict(link=url, url=url, meta=dict(source=self.source, depth=response.meta['depth']))
 
             item = GenericwebcrawlerItem()
             item['title'] = title
