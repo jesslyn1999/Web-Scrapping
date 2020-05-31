@@ -14,8 +14,6 @@ from genericWebCrawler.genericWebCrawler.parser import parsers
 def create_crawler_class():
     Token.set_extension('tag', default=False)
 
-    results = []
-
     class UrlExtractor(Spider):
         name = 'url-extractor'
         start_urls = []
@@ -39,7 +37,6 @@ def create_crawler_class():
                 self.options['allow_domains'] = root_domain
                 # print(self.options.get('allow_domains'))
             UrlExtractor.allowed_domains = [self.options.get('allow_domains')]
-            print("HEYY IM HERE init : ", root)
 
             self.clean_options()
             self.le = LinkExtractor(allow=self.options.get('allow'), deny=self.options.get('deny'),
@@ -87,4 +84,4 @@ def create_crawler_class():
                 else:
                     self.options[key] = self.options.get(key).split(',')
 
-    return results, UrlExtractor
+    return UrlExtractor
