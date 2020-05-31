@@ -6,7 +6,7 @@ from spacy.lang.en import English # updated
 from urllib.parse import urlparse
 # from w3lib.html import remove_tags
 from bs4 import BeautifulSoup
-from genericWebCrawler.genericWebCrawler.parser import parsers
+import genericWebCrawler.genericWebCrawler.spiders.crawler
 
 # Faster alternative? :
 # from nltk import tokenize
@@ -27,7 +27,6 @@ def create_crawler_class():
             self.depth = depth
             self.traversedLinks = set()
             UrlExtractor.start_urls.append(root)
-            # print(self.options.get('allow_domains'))
             if self.options.get('allow_domains') != '':
                 print("allowed domains set to given settings")
             else:
@@ -60,18 +59,21 @@ def create_crawler_class():
             return True
 
         def parse_req(self, response):
-            item = parsers.parse(response.url, response)
-            print(type(item))
+            # initial scrape -> must be scraped no matter what (serves as a starting ground), even if don't follow keyword!
+            item = genericWebCrawler.genericWebCrawler.spiders.crawler.parsers.parse(response.url, response)
+            # print(type(item))
             all_urls = set(item['follow_links'])
-            non_traversed_urls = all_urls.difference(self.traversedLinks)
-            self.traversedLinks = self.traversedLinks | all_urls
 
+            non_traversed_urls = all_urls.difference(self.traversedLinks)
+
+            self.traversedLinks = self.traversedLinks | all_urls
             if int(response.meta['depth']) < int(self.depth):
-                for url in non_traversed_urls:
+                for url in non_traversed_urls :
                     print("Traversing", url)
                     yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
-                if len(non_traversed_urls) > 0:
-                    for url in non_traversed_urls:
+
+                if len(non_traversed_urls ) > 0:
+                    for url in non_traversed_urls :
                         yield dict(link=url, url=url, meta=dict(source=self.source, depth=response.meta['depth']))
 
             yield item

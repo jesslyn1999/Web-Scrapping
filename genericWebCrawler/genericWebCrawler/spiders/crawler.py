@@ -2,17 +2,20 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from .urlExtractor import create_crawler_class
 from genericWebCrawler.genericWebCrawler import settings as local_settings
-from genericWebCrawler.genericWebCrawler.parser import parsers
+from genericWebCrawler.genericWebCrawler.parser import Parser
 from genericWebCrawler.genericWebCrawler.parsers.generic import generic_parser
 from genericWebCrawler.genericWebCrawler.parsers.kompas import kompas_parser
 from genericWebCrawler.genericWebCrawler.parsers.itb import itb_ac_id_parser
 
-parsers.register('*itb.ac.id', itb_ac_id_parser)
-parsers.register('*kompas.com', kompas_parser)
-parsers.register('*', generic_parser)
+parsers = None # exported
 
+def loadScraper(_root, keywords, _allowed_domains, _depth):
+    global parsers
+    parsers = Parser(keywords)
+    parsers.register('*itb.ac.id', itb_ac_id_parser)
+    parsers.register('*kompas.com', kompas_parser)
+    parsers.register('*', generic_parser)
 
-def loadScraper(_root, _allowed_domains, _depth):
     crawler_settings = Settings()
     crawler_settings.setmodule(local_settings)
     UrlExtractor = create_crawler_class()

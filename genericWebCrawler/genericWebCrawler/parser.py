@@ -3,8 +3,9 @@ import fnmatch
 import collections
 
 class Parser:
-    def __init__(self):
+    def __init__(self, keywords):
         self.parsers = list()
+        self.keywords = keywords
 
     def register(self, domain, function):
         if isinstance(domain, (list, tuple, set)):
@@ -15,7 +16,7 @@ class Parser:
 
     def parse(self, url, response):
         function = self._match_function(url)
-        return function(url, response)
+        return function(url, response, self.keywords)
 
     def _extract_domain(self, url):
         url = urlparse(url)
@@ -28,4 +29,3 @@ class Parser:
             if fnmatch.fnmatch(domain, pattern):
                 return function
 
-parsers = Parser()
