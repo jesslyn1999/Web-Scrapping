@@ -1,20 +1,22 @@
 from bs4 import BeautifulSoup
 from scrapy.linkextractors import LinkExtractor
-from spacy.lang.en import English # updated
+from spacy.lang.en import English
+from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
 
 nlp = English()
 nlp.add_pipe(nlp.create_pipe('sentencizer'))
 
-def generic_parser(url, response):
-    # see request result
-    # print("THE URL: ", response.url)
-    # print("RESPONSE: ")
-    # print(response)
-    # response("<em> <td> Halo, </td> aku text outlier </em>")
-    title = response.xpath('//title//text()').extract()[0].strip()
 
+def generic_parser(url, response):
     # select all texts between <p> tags except script tags: (double // to select all children too)
     bsoup = BeautifulSoup(response.text, 'html.parser')
+
+    item = GenericwebcrawlerItem()
+    item['title'] = response.xpath('//title//text()').extract()[0].strip()
+    item['url'] = response.meta['url']
+    item['sentences'] = []
+    item['follow_links'] = list(get_all_links(response))
+
     # remove <a> tags
     a_tags = bsoup.find_all('a')
     for a in a_tags:
@@ -32,18 +34,15 @@ def generic_parser(url, response):
     # print("P_CHILDREN: ", p_children)
     # temp = response.xpath('//*[not(self::script) and not(self::a)]/p/text()[re:test(., "\w+")]').extract()
 
-    listOfSentences = []
     for child in p_children:
         child = child.get_text()
         string = child.strip()
         doc = nlp(string)
         # remove excess middle whitespaces & minimum 10 chars to be considered as a sentence
         sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents if len(sent.string.strip()) > 10]
-        listOfSentences.extend(sentences)
+        item['sentences'].extend(sentences)
 
-    all_urls = get_all_links(response)
-
-    return (title, response.meta['url'], listOfSentences, all_urls)
+    return item
 
 
 def get_all_links(response):

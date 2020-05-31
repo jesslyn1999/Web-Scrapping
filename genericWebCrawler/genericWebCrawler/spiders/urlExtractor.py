@@ -6,7 +6,6 @@ from spacy.lang.en import English # updated
 from urllib.parse import urlparse
 # from w3lib.html import remove_tags
 from bs4 import BeautifulSoup
-from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
 from genericWebCrawler.genericWebCrawler.parser import parsers
 
 # Faster alternative? :
@@ -24,7 +23,7 @@ def create_crawler_class():
         nlp.add_pipe(nlp.create_pipe('sentencizer'))
 
         def __init__(self, root=None, depth=0, *args, **kwargs):
-            self.logger.info("[LE] Source: %s Depth: %s Kwargs: %s", root, depth, kwargs)
+            self.logger.info("[LE] Source: %s Depth: %s Args : %s Kwargs: %s", root, depth, args, kwargs)
             self.source = root
             self.options = kwargs
             self.depth = depth
@@ -40,6 +39,7 @@ def create_crawler_class():
                 self.options['allow_domains'] = root_domain
                 # print(self.options.get('allow_domains'))
             UrlExtractor.allowed_domains = [self.options.get('allow_domains')]
+            print("HEYY IM HERE init : ", root)
 
             self.clean_options()
             self.le = LinkExtractor(allow=self.options.get('allow'), deny=self.options.get('deny'),
@@ -63,9 +63,9 @@ def create_crawler_class():
             return True
 
         def parse_req(self, response):
-            (title, url, listOfSentences, all_urls) = parsers.parse(response.url, response)
-
-            results.append((title, url, listOfSentences, all_urls))
+            item = parsers.parse(response.url, response)
+            print(type(item))
+            all_urls = set(item['follow_links'])
             non_traversed_urls = all_urls.difference(self.traversedLinks)
             self.traversedLinks = self.traversedLinks | all_urls
 
@@ -77,20 +77,7 @@ def create_crawler_class():
                     for url in non_traversed_urls:
                         yield dict(link=url, url=url, meta=dict(source=self.source, depth=response.meta['depth']))
 
-            item = GenericwebcrawlerItem()
-            item['title'] = title
-            item['url'] = response.meta['url']
-            item['sentences'] = listOfSentences
-            item['links'] = list(all_urls)
             yield item
-
-        def get_all_links(self, response):
-            links = self.le.extract_links(response)
-            str_links = set()
-            for link in links:
-                if(link.url not in self.traversedLinks):
-                    str_links.add(link.url)
-            return str_links
 
         def clean_options(self):
             allowed_options = ['allow', 'deny', 'allow_domains', 'deny_domains', 'restrict_xpaths', 'restrict_css']
