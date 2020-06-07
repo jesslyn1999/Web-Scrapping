@@ -2,15 +2,11 @@ from scrapy.spiders import Spider
 from scrapy import Request
 from scrapy.linkextractors import LinkExtractor
 from spacy.tokens import Token
-from spacy.lang.en import English # updated
+from spacy.lang.en import English
 from urllib.parse import urlparse
-# from w3lib.html import remove_tags
-from bs4 import BeautifulSoup
-import genericWebCrawler.genericWebCrawler.spiders.crawler
+from genericWebCrawler.genericWebCrawler.spiders import crawler
 
-# Faster alternative? :
-# from nltk import tokenize
-# have to download punkt: python -m nltk.downloader 'punkt' OR go to python shell and type 'nltk.download('punkt')
+
 def create_crawler_class():
     Token.set_extension('tag', default=False)
 
@@ -51,31 +47,23 @@ def create_crawler_class():
         def start_requests(self, *args, **kwargs):
             yield Request('%s' % self.source, callback=self.parse_req, meta={'url': self.source})
 
-        def tag_visible(element):
-            if element.parent.name in ['a', 'style', 'script', 'head', 'title', 'meta', '[document]']:
-                return False
-            if isinstance(element, Comment):  # TODO: WHY Comment UNDEFINED ?
-                return False
-            return True
-
         def parse_req(self, response):
-            # initial scrape -> must be scraped no matter what (serves as a starting ground), even if don't follow keyword!
-            item = genericWebCrawler.genericWebCrawler.spiders.crawler.parsers.parse(response.url, response)
-            # print(type(item))
+            # initial scrape -> must be scraped no matter what(serves as
+            # a starting ground), even if don't follow keyword!
+            item = crawler.parserHelper.parse(response)
             all_urls = set(item['follow_links'])
 
             non_traversed_urls = all_urls.difference(self.traversedLinks)
 
             self.traversedLinks = self.traversedLinks | all_urls
             if int(response.meta['depth']) < int(self.depth):
-                for url in non_traversed_urls :
+                for url in non_traversed_urls:
                     print("Traversing", url)
                     yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
 
-                if len(non_traversed_urls ) > 0:
-                    for url in non_traversed_urls :
+                if len(non_traversed_urls) > 0:
+                    for url in non_traversed_urls:
                         yield dict(link=url, url=url, meta=dict(source=self.source, depth=response.meta['depth']))
-
             yield item
 
         def clean_options(self):

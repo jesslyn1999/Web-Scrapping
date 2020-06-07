@@ -1,31 +1,30 @@
 from urllib.parse import urlparse
 import fnmatch
-import collections
 
-class Parser:
+
+class ParserHelper:
     def __init__(self, keywords):
         self.parsers = list()
         self.keywords = keywords
 
-    def register(self, domain, function):
-        if isinstance(domain, (list, tuple, set)):
-            for d in domain:
-                self.parsers.append((d, function))
+    def register(self, parser_object):
+        if isinstance(parser_object, (list, tuple, set)):
+            for obj in parser_object:
+                self.parsers.append(obj)
         else:
-            self.parsers.append((domain, function))
+            self.parsers.append(parser_object)
 
-    def parse(self, url, response):
-        function = self._match_function(url)
-        return function(url, response, self.keywords)
+    def parse(self, response):
+        parser_obj = self._match_object(response.url)
+        return parser_obj.parser(response, self.keywords)
 
-    def _extract_domain(self, url):
+    def _match_object(self, url):
+        domain = self._extract_domain(url)
+        for parser_object in self.parsers:
+            if fnmatch.fnmatch(domain, parser_object.domain_name):
+                return parser_object
+
+    @staticmethod
+    def _extract_domain(url):
         url = urlparse(url)
         return url.netloc
-
-    def _match_function(self, url):
-        domain = self._extract_domain(url)
-        for parser in self.parsers:
-            (pattern, function) = parser
-            if fnmatch.fnmatch(domain, pattern):
-                return function
-

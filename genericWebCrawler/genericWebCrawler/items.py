@@ -15,8 +15,9 @@ class GenericwebcrawlerItem(scrapy.Item):
     follow_links = scrapy.Field()
 
 
-class KompaswebcrawlerItem(scrapy.Item):
-    title = scrapy.Field()
-    url = scrapy.Field()
-    sentences = scrapy.Field()
-    follow_links = scrapy.Field()
+class KompaswebcrawlerItem(GenericwebcrawlerItem):
+    pass
+
+
+class BbcwebcrawlerItem(GenericwebcrawlerItem):
+    pass

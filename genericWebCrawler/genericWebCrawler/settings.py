@@ -17,6 +17,7 @@ NEWSPIDER_MODULE = 'genericWebCrawler.genericWebCrawler.spiders'
 ITEM_PIPELINES = {
     'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompaswebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.BbcwebcrawlerPipeline': 300,
 }
 LOG_LEVEL = 'INFO'
 

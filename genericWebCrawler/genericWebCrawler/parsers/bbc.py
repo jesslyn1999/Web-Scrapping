@@ -1,19 +1,19 @@
 from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
-from genericWebCrawler.genericWebCrawler.items import KompaswebcrawlerItem
+from genericWebCrawler.genericWebCrawler.items import BbcwebcrawlerItem
 
 
-class KompasParser(GenericParser):
-    domain_name = '*kompas.com'
+class BbcParser(GenericParser):
+    domain_name = '*bbc.com'
 
     def __init__(self):
         super().__init__()
-        self._item = KompaswebcrawlerItem()
+        self._item = BbcwebcrawlerItem()
 
 
-# def kompas_parser(url, response, keywords):
+# def bbc_parser(url, response, keywords):
 #     bsoup = BeautifulSoup(response.text, 'html.parser')
 #
-#     item = KompaswebcrawlerItem()
+#     item = BbcwebcrawlerItem()
 #     item['title'] = bsoup.title.string
 #     item['url'] = response.meta['url']
 #     item['sentences'] = []
@@ -27,4 +27,5 @@ class KompasParser(GenericParser):
 #         doc = nlp(string)
 #         sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
 #         item['sentences'].extend(sentences)
+#
 #     return item
