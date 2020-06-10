@@ -9,6 +9,7 @@ from genericWebCrawler.genericWebCrawler.spiders import crawler
 
 def create_crawler_class():
     Token.set_extension('tag', default=False)
+    result = {}
 
     class UrlExtractor(Spider):
         name = 'url-extractor'
@@ -18,19 +19,24 @@ def create_crawler_class():
 
         def __init__(self, root=None, depth=0, *args, **kwargs):
             self.logger.info("[LE] Source: %s Depth: %s Args : %s Kwargs: %s", root, depth, args, kwargs)
-            self.source = root
             self.options = kwargs
             self.depth = depth
             self.traversedLinks = set()
-            UrlExtractor.start_urls.append(root)
+            if isinstance(root, (list, tuple, set)):
+                self.start_urls = root
+            else:
+                self.start_urls.append(root)
+
             if self.options.get('allow_domains') != '':
                 print("allowed domains set to given settings")
             else:
                 print("allowed domains set to ROOT DOMAIN: ")
-                root_domain = urlparse(root).netloc
-                root_domain = '.'.join(root_domain.split('.')[1:])
-                self.options['allow_domains'] = root_domain
-                # print(self.options.get('allow_domains'))
+                self.options['allow_domains'] = []
+                for root_url in self.start_urls:
+                    root_domain = urlparse(root_url).netloc
+                    root_domain = '.'.join(root_domain.split('.')[1:])
+                    self.options['allow_domains'].append(root_domain)
+                    # print(self.options.get('allow_domains'))
             UrlExtractor.allowed_domains = [self.options.get('allow_domains')]
 
             self.clean_options()
@@ -45,13 +51,15 @@ def create_crawler_class():
             super(UrlExtractor, self).__init__(*args, **kwargs)
 
         def start_requests(self, *args, **kwargs):
-            yield Request('%s' % self.source, callback=self.parse_req, meta={'url': self.source})
+            for start_url in self.start_urls:
+                yield Request('%s' % start_url, callback=self.parse_req,
+                              meta={'url': start_url, 'parent_url': start_url})
 
         def parse_req(self, response):
             # initial scrape -> must be scraped no matter what(serves as
             # a starting ground), even if don't follow keyword!
             item = crawler.parserHelper.parse(response)
-            all_urls = set(item['follow_links'])
+            all_urls = set(item['FollowLinks'])
 
             non_traversed_urls = all_urls.difference(self.traversedLinks)
 
@@ -59,11 +67,16 @@ def create_crawler_class():
             if int(response.meta['depth']) < int(self.depth):
                 for url in non_traversed_urls:
                     print("Traversing", url)
-                    yield Request('%s' % url, callback=self.parse_req, meta={'url': url})
+                    yield Request('%s' % url, callback=self.parse_req,
+                                  meta={'url': url, 'parent_url': response.meta['parent_url']})
 
-                if len(non_traversed_urls) > 0:
-                    for url in non_traversed_urls:
-                        yield dict(link=url, url=url, meta=dict(source=self.source, depth=response.meta['depth']))
+                # These functions below seem to be useless
+                # if len(non_traversed_urls) > 0:
+                #     for url in non_traversed_urls:
+                #         yield dict(link=url, url=url, meta=dict(source=self.source, depth=response.meta['depth']))
+            if not response.meta['parent_url'] in result:
+                result[response.meta['parent_url']] = []
+            result[response.meta['parent_url']].append(item)
             yield item
 
         def clean_options(self):
@@ -72,6 +85,7 @@ def create_crawler_class():
                 if self.options.get(key, None) is None:
                     self.options[key] = []
                 else:
-                    self.options[key] = self.options.get(key).split(',')
+                    if isinstance(self.options.get(key), str):
+                        self.options[key] = self.options.get(key).split(',')
 
-    return UrlExtractor
+    return UrlExtractor, result

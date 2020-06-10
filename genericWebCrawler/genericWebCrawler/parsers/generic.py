@@ -17,10 +17,10 @@ class GenericParser(object):
     def parser(self, response, keywords):
         bsoup = BeautifulSoup(response.text, 'html.parser')
 
-        self._item['title'] = bsoup.title.string
-        self._item['url'] = response.meta['url']
-        self._item['sentences'] = []
-        self._item['follow_links'] = list(self.get_all_links(response, keywords))
+        self._item['Title'] = bsoup.title.string
+        self._item['URLNews'] = response.meta['url']
+        self._item['Body'] = []
+        self._item['FollowLinks'] = list(self.get_all_links(response, keywords))
 
         p_children = bsoup.find_all('p')
 
@@ -29,7 +29,7 @@ class GenericParser(object):
             string = child.strip()
             doc = nlp(string)
             sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
-            self._item['sentences'].extend(sentences)
+            self._item['Body'].extend(sentences)
         return self._item
 
     @staticmethod
@@ -45,7 +45,7 @@ class GenericParser(object):
             found = False
             for keyword in keywords:
                 if re.search(r"\b%s\b" % re.escape(keyword), link.url):
-                    print("url '%s' contains keyword '%s'" % (link.url, keyword))
+                    # print("url '%s' contains keyword '%s'" % (link.url, keyword))
                     found = True
                     break
             if found:

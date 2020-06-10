@@ -30,13 +30,13 @@ class GenericwebcrawlerPipeline:
         self._client.close()
 
     def process_item(self, item, spider):
-        print("Item yielded: ", type(item))
+        print('item type: ', type(item))
         if not (type(item) is self.item_type):
             return item
         for data in item:
             if not data:
                 raise DropItem("Missing data!")
-        self._collection.update({'url': item['url']}, dict(item), upsert=True)
+        self._collection.update({'URLNews': item['URLNews']}, dict(item), upsert=True)
         return item
 
 
