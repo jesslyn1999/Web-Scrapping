@@ -60,3 +60,8 @@ class ItbwebcrawlerPipeline(GenericwebcrawlerPipeline):
 class KompasianawebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'kompasiana'
     item_type = items.KompasianawebcrawlerItem
+
+
+class KontanwebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'kontan'
+    item_type = items.KontanwebcrawlerItem

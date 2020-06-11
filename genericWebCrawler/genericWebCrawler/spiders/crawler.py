@@ -15,14 +15,14 @@ def load_scraper(query, keywords, _allowed_domains, _depth):
     parserHelper = ParserHelper(keywords)
     parserHelper.register(
         [parsers.BbcParser(), parsers.ItbParser(), parsers.KompasParser(), parsers.KompasianaParser(),
-         parsers.KompasTvParser(), parsers.GenericParser()])
+         parsers.KompasTvParser(), parsers.KontanParser(), parsers.GenericParser()])
 
     crawler_settings = Settings()
     crawler_settings.setmodule(local_settings)
     UrlExtractor, result = create_crawler_class()
 
     root_urls_list = google_scraper.get_google_search_results_link(query, keywords, 5)
-    # root_urls_list = "https://www.kompas.tv/article/86367/lanjutan-tahapan-pilkada-2020-akan-dilakukan-15-juni"
+    # root_urls_list = "https://nasional.kontan.co.id/news/ada-wabah-corona-kpu-usul-tambahan-anggaran-pilkada-serentak"
 
     process = CrawlerProcess(settings=crawler_settings)  # ALT: CrawlerProcess(get_project_settings())
     process.crawl(UrlExtractor, root=root_urls_list, allow_domains=_allowed_domains, depth=_depth)

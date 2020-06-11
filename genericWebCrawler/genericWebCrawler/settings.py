@@ -21,6 +21,7 @@ ITEM_PIPELINES = {
     'genericWebCrawler.genericWebCrawler.pipelines.ItbwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompasianawebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.KontanwebcrawlerPipeline': 300,
 }
 LOG_LEVEL = 'ERROR'
 

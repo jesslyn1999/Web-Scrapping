@@ -43,6 +43,12 @@ class KompasTvwebcrawlerItem(GenericwebcrawlerItem):
     Editor = scrapy.Field()
 
 
+class KontanwebcrawlerItem(GenericwebcrawlerItem):
+    Time = scrapy.Field()
+    Source = scrapy.Field()
+    Editor = scrapy.Field()
+
+
 class ItbwebcrawlerItem(GenericwebcrawlerItem):
     pass
 
