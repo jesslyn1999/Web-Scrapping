@@ -18,8 +18,11 @@ ITEM_PIPELINES = {
     'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompaswebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.BbcwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.ItbwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.KompasianawebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
 }
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'ERROR'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

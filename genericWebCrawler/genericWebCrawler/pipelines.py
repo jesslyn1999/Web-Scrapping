@@ -1,13 +1,11 @@
 import pymongo
 from scrapy.exceptions import DropItem
-from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
-from genericWebCrawler.genericWebCrawler.items import KompaswebcrawlerItem
-from genericWebCrawler.genericWebCrawler.items import BbcwebcrawlerItem
+from genericWebCrawler.genericWebCrawler import items
 
 
 class GenericwebcrawlerPipeline:
     mongo_collection = 'generic'
-    item_type = GenericwebcrawlerItem
+    item_type = items.GenericwebcrawlerItem
 
     def __init__(self, mongo_uri, mongo_db):
         self._mongo_uri = mongo_uri
@@ -30,7 +28,6 @@ class GenericwebcrawlerPipeline:
         self._client.close()
 
     def process_item(self, item, spider):
-        print('item type: ', type(item))
         if not (type(item) is self.item_type):
             return item
         for data in item:
@@ -42,9 +39,24 @@ class GenericwebcrawlerPipeline:
 
 class KompaswebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'kompas'
-    item_type = KompaswebcrawlerItem
+    item_type = items.KompaswebcrawlerItem
+
+
+class KompasTvwebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'kompas_tv'
+    item_type = items.KompasTvwebcrawlerItem
 
 
 class BbcwebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'bbc'
-    item_type = BbcwebcrawlerItem
+    item_type = items.BbcwebcrawlerItem
+
+
+class ItbwebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'itb'
+    item_type = items.ItbwebcrawlerItem
+
+
+class KompasianawebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'kompasiana'
+    item_type = items.KompasianawebcrawlerItem

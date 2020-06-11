@@ -4,18 +4,19 @@ from scrapy.linkextractors import LinkExtractor
 from spacy.lang.en import English
 from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
 
-nlp = English()
-nlp.add_pipe(nlp.create_pipe('sentencizer'))
-
 
 class GenericParser(object):
     domain_name = '*'
+    nlp = English()
+    nlp.add_pipe(nlp.create_pipe("sentencizer"))
 
     def __init__(self):
-        self._item = GenericwebcrawlerItem()
+        self._item = {}
+        pass
 
     def parser(self, response, keywords):
         bsoup = BeautifulSoup(response.text, 'html.parser')
+        self._item = GenericwebcrawlerItem()
 
         self._item['Title'] = bsoup.title.string
         self._item['URLNews'] = response.meta['url']
@@ -27,7 +28,7 @@ class GenericParser(object):
         for p_child in p_children:
             child = p_child.get_text()
             string = child.strip()
-            doc = nlp(string)
+            doc = self.nlp(string)
             sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
             self._item['Body'].extend(sentences)
         return self._item
@@ -39,12 +40,12 @@ class GenericParser(object):
                            strip=True)
         links = le.extract_links(response)
         str_links = set()
-        keywords = keywords.split(',')
-        print("keywords", keywords)
+        keywords = [keyword.strip() for keyword in keywords.split(',')]
+        # print("keywords", keywords)
         for link in links:
             found = False
             for keyword in keywords:
-                if re.search(r"\b%s\b" % re.escape(keyword), link.url):
+                if re.search(r"\b%s\b" % re.escape(keyword), link.url.lower()):
                     # print("url '%s' contains keyword '%s'" % (link.url, keyword))
                     found = True
                     break

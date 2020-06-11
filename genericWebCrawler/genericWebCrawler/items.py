@@ -28,3 +28,21 @@ class KompaswebcrawlerItem(GenericwebcrawlerItem):
 
 class BbcwebcrawlerItem(GenericwebcrawlerItem):
     pass
+
+
+class KompasianawebcrawlerItem(GenericwebcrawlerItem):
+    CreatedTime = scrapy.Field()
+    LastEdit = scrapy.Field()
+    LastSeenNumber = scrapy.Field()
+    LikeNumber = scrapy.Field()
+    CommentNumber = scrapy.Field()
+
+
+class KompasTvwebcrawlerItem(GenericwebcrawlerItem):
+    Time = scrapy.Field()
+    Editor = scrapy.Field()
+
+
+class ItbwebcrawlerItem(GenericwebcrawlerItem):
+    pass
+
