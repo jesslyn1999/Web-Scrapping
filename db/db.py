@@ -3,8 +3,11 @@ import os
 
 
 mongodb_uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
-print("mongodb server: ", mongodb_uri)
+mongodb_db = "crawler_db"
+mongodb_result_collection = "crawler_result"
 client = MongoClient(mongodb_uri)
-db = client.crawler_db
+db = client[mongodb_db]
 
-crawl_result_collection = db.crawl_result
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+MONGODB_DB = "crawler_db"
+crawl_result_collection = db[mongodb_result_collection]

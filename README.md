@@ -2,44 +2,65 @@
 
 This repository contains the code for the prototype of webcrawler for P3MI e-Democracy Data Integration project.
 
-To try the demo, run the following script:
-```bash
-$ MONGODB_URI=<MongoDB URI> python crawl.py
+
+## Getting Started
+
+### Prerequisites
+
+What things you need to install the software and how to install them
+
 ```
-Replace `MongoDB URI` with actual connection parameter, e.g. `mongodb://localhost:27017/`
+python3
+pip
+virtualenv  --  you may skip this if you prefer to use your global pip executable
+```
+
+### Installing
+
+A step by step series of examples that tell you how to get a development env running
+
+1. Create virtualenv and using it
+
+    ```
+    virtualenv venv
+    . venv/bin/activate
+    ```
+    
+    For Windows users, 
+    
+    ```
+    virtualenv venv
+    venv\Scripts\activate
+    ```
+
+2. Installing all needed package
+
+    ```
+    pip install -r requirements.txt
+    ```
 
 
 ### Selenium set up
-#### Drivers
-Selenium requires a driver to interface with the chosen browser. Firefox, for example, requires geckodriver, which needs to be installed before the below examples can be run. Make sure it’s in your PATH, e. g., place it in /usr/bin or /usr/local/bin.
 
-Failure to observe this step will give you an error selenium.common.exceptions.WebDriverException: Message: ‘geckodriver’ executable needs to be in PATH.
+#### Chromium Driver
+Selenium requires a driver to interface with the chosen browser. Chrome, for example, requires **chromium**, which needs to be installed before the below examples can be run. Make sure it’s in your PATH, e. g., 
+1. for Ubuntu / Linux,place it in `/usr/bin` or `/usr/local/bin`.
+2. for Windows, add this chromium to environment variable path.
 
-Other supported browsers will have their own drivers available. Links to some of the more popular browser drivers follow.
+
+Failure to observe this step will give you an error selenium.common.exceptions.WebDriverException: Message: ‘chromium’ executable needs to be in PATH.
+
+As this project is developed using Chromium driver, Chromium download link is as follow.
 
 | Web Browser   | Link                                                                  |
 |:-------------:|:---------------------------------------------------------------------:| 
 | Chrome:       |	https://sites.google.com/a/chromium.org/chromedriver/downloads      |
-| Edge:         | https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/ |
-| Firefox:      | https://github.com/mozilla/geckodriver/releases                       |
-| Safari:       |	https://webkit.org/blog/6900/webdriver-support-in-safari-10/        |
- 
-#### Detailed instructions for Windows users
-1. Install Python 3.6 using the MSI available in python.org download page.
-2. Start a command prompt using the cmd.exe program and run the pip command as given below to install selenium.
-    ```
-    C:\Python35\Scripts\pip.exe install selenium
-    ```
-    
-Now you can run your test scripts using Python. For example, if you have created a Selenium based script and saved it inside C:\my_selenium_script.py, you can run it like this:
-```
-C:\Python35\python.exe C:\my_selenium_script.py
-```
+
 
 #### Downloading Selenium server
-> Note
+> ~**NOTE**~
 >
-> **The Selenium server is only required if you want to use the remote WebDriver.** See the Using Selenium with remote WebDriver section for more details. If you are a beginner learning Selenium, you can skip this section and proceed with next chapter.
+> **The Selenium server is only required if you want to use the remote WebDriver.** See the Using Selenium with remote WebDriver section for more details. If you are a beginner learning Selenium, you can skip this section.
 
 Selenium server is a Java program. Java Runtime Environment (JRE) 1.6 or newer version is recommended to run Selenium server.
 
@@ -57,3 +78,23 @@ If JRE is installed as a non-root user and/or if it is not available in the PATH
 ```
 /path/to/java -jar /path/to/selenium-server-standalone-2.x.x.jar
 ```
+
+
+### Running the Project
+
+To try the demo, run the following script:
+```bash
+$ MONGODB_URI=<MongoDB URI> python crawl.py
+```
+
+Replace `MONGODB_URI` with actual connection parameter, e.g. `mongodb://localhost:27017/`.
+
+If `MONGODB_URI` isn't provided, default goes to `mongodb://localhost:27017/` 
+
+
+## Develop the Project
+If you want to add another Parser Class, proceed to folder `./genericWebCrawler/genericWebCrawler/parsers`. Be sure to add item instance / model in folder `./genericWebCrawler/genericWebCrawler/items.py` and register in `./genericWebCrawler/genericWebCrawler/settings.py` for the relevant pipeline in folder `./genericWebCrawler/genericWebCrawler/pipelines.py`.
+
+Seek for **Scrapy** Documentation to have a better understanding.
+
+For the Parser with no specific class, it will be treated as Generic Class Parser.

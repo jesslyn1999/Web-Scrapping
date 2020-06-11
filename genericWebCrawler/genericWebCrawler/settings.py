@@ -8,7 +8,7 @@
 #     https://doc.scrapy.org/en/latest/topics/settings.html
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-import os
+from db.db import mongodb_db, mongodb_uri
 
 BOT_NAME = 'genericWebCrawler'
 
@@ -32,8 +32,8 @@ LOG_LEVEL = 'ERROR'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
-MONGODB_DB = "crawler_db"
+MONGODB_URI = mongodb_uri
+MONGODB_DB = mongodb_db
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
