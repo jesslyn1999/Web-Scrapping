@@ -21,6 +21,7 @@ def generic_parser(url, response):
     a_tags = bsoup.find_all('a')
     for a in a_tags:
         a.decompose()
+
     # remove <script> tags
     script_tags = bsoup.find_all('script')
     for s in script_tags:

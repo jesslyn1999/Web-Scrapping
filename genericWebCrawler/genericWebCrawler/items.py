@@ -20,3 +20,9 @@ class KompaswebcrawlerItem(scrapy.Item):
     url = scrapy.Field()
     sentences = scrapy.Field()
     follow_links = scrapy.Field()
+
+class CNNwebcrawlerItem(scrapy.Item):
+    title = scrapy.Field()
+    url = scrapy.Field()
+    sentences = scrapy.Field()
+    follow_links = scrapy.Field()

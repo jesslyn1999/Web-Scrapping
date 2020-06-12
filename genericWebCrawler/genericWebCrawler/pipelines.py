@@ -11,7 +11,7 @@ import json
 from scrapy.exceptions import DropItem
 from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
 from genericWebCrawler.genericWebCrawler.items import KompaswebcrawlerItem
-
+from genericWebCrawler.genericWebCrawler.items import CNNwebcrawlerItem
 
 class WebcrawlerPipeline:
     def __init__(self, mongo_uri, mongo_db, mongo_collection):
@@ -66,6 +66,25 @@ class KompaswebcrawlerPipeline(WebcrawlerPipeline):
 
     def process_item(self, item, spider):
         if not isinstance(item, KompaswebcrawlerItem):
+            return item
+        for data in item:
+            if not data:
+                raise DropItem("Missing data!")
+        self.collection.update({'url': item['url']}, dict(item), upsert=True)
+        return item
+
+
+class CNNwebcrawlerPipeline(WebcrawlerPipeline):
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongo_uri=crawler.settings.get('MONGODB_URI'),
+            mongo_db=crawler.settings.get('MONGODB_DB', 'default_items'),
+            mongo_collection='cnn',
+        )
+
+    def process_item(self, item, spider):
+        if not isinstance(item, CNNwebcrawlerItem):
             return item
         for data in item:
             if not data:

@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 # from w3lib.html import remove_tags
 from bs4 import BeautifulSoup
 import genericWebCrawler.genericWebCrawler.spiders.crawler
-
+import dryscrape
 # Faster alternative? :
 # from nltk import tokenize
 # have to download punkt: python -m nltk.downloader 'punkt' OR go to python shell and type 'nltk.download('punkt')
@@ -51,7 +51,7 @@ def create_crawler_class():
         def start_requests(self, *args, **kwargs):
             yield Request('%s' % self.source, callback=self.parse_req, meta={'url': self.source})
 
-        def tag_visible(element):
+        def tag_visible(self, element):
             if element.parent.name in ['a', 'style', 'script', 'head', 'title', 'meta', '[document]']:
                 return False
             if isinstance(element, Comment):  # TODO: WHY Comment UNDEFINED ?

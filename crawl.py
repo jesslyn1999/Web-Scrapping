@@ -12,4 +12,4 @@ def start_scraping_job(
 
 
 if __name__ == '__main__':
-    start_scraping_job("https://regional.kompas.com/read/2020/05/31/07483571/ternak-warga-banyak-yang-hilang-misterius-ternyata-ini-penyebabnya", keywords="warga,ternak", depth=0)
+    start_scraping_job("https://www.cnnindonesia.com/nasional/20200607164937-20-510762/risma-usul-ke-khofifah-agar-tak-perpanjang-psbb-surabaya", keywords="warga,ternak", depth=0)

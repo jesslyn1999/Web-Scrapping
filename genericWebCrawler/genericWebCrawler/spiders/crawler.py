@@ -6,7 +6,7 @@ from genericWebCrawler.genericWebCrawler.parser import Parser
 from genericWebCrawler.genericWebCrawler.parsers.generic import generic_parser
 from genericWebCrawler.genericWebCrawler.parsers.kompas import kompas_parser
 from genericWebCrawler.genericWebCrawler.parsers.itb import itb_ac_id_parser
-
+from genericWebCrawler.genericWebCrawler.parsers.cnn import cnn_parser
 parsers = None # exported
 
 def loadScraper(_root, keywords, _allowed_domains, _depth):
@@ -14,6 +14,7 @@ def loadScraper(_root, keywords, _allowed_domains, _depth):
     parsers = Parser(keywords)
     parsers.register('*itb.ac.id', itb_ac_id_parser)
     parsers.register('*kompas.com', kompas_parser)
+    parsers.register('*cnnindonesia.com', cnn_parser)
     parsers.register('*', generic_parser)
 
     crawler_settings = Settings()
