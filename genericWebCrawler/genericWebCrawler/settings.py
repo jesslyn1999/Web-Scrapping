@@ -8,7 +8,7 @@
 #     https://doc.scrapy.org/en/latest/topics/settings.html
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-import os
+from db.db import mongodb_db, mongodb_uri
 
 BOT_NAME = 'genericWebCrawler'
 
@@ -17,9 +17,17 @@ NEWSPIDER_MODULE = 'genericWebCrawler.genericWebCrawler.spiders'
 ITEM_PIPELINES = {
     'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompaswebcrawlerPipeline': 300,
+<<<<<<< HEAD
     'genericWebCrawler.genericWebCrawler.pipelines.CNNwebcrawlerPipeline': 300,
+=======
+    'genericWebCrawler.genericWebCrawler.pipelines.BbcwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.ItbwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.KompasianawebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
+    'genericWebCrawler.genericWebCrawler.pipelines.KontanwebcrawlerPipeline': 300,
+>>>>>>> 2be4fb398b8f8fdcdd00ee9116ebcda4d9ba5103
 }
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'ERROR'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -28,8 +36,8 @@ LOG_LEVEL = 'INFO'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
-MONGODB_DB = "crawler_db"
+MONGODB_URI = mongodb_uri
+MONGODB_DB = mongodb_db
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

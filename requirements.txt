@@ -2,3 +2,4 @@ scrapy
 spacy
 pymongo
 bs4
+selenium

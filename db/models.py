@@ -1,9 +1,7 @@
 class CrawlResult:
-    def __init__(self, title, url, sentences=None, id=None, links=None):
+    def __init__(self, SearchQuery, FilterKeywords, Results):
         super().__init__()
 
-        self.title = title
-        self.url = url
-        self.sentences = sentences
-        self.id = id
-        self.links = list(links)
+        self.SearchQuery = str(SearchQuery)
+        self.FilterKeywords = [keyword.strip() for keyword in FilterKeywords.split(',')]
+        self.Results = list(Results)
