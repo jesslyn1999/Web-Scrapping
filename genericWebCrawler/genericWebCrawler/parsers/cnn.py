@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 from spacy.lang.en import English
 from genericWebCrawler.genericWebCrawler.items import CNNwebcrawlerItem
 from genericWebCrawler.genericWebCrawler.parsers.get_all_links import get_all_links
-import dryscrape
 nlp = English()
 nlp.add_pipe(nlp.create_pipe('sentencizer'))
 
