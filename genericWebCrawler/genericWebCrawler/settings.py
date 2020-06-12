@@ -17,15 +17,12 @@ NEWSPIDER_MODULE = 'genericWebCrawler.genericWebCrawler.spiders'
 ITEM_PIPELINES = {
     'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompaswebcrawlerPipeline': 300,
-<<<<<<< HEAD
     'genericWebCrawler.genericWebCrawler.pipelines.CNNwebcrawlerPipeline': 300,
-=======
     'genericWebCrawler.genericWebCrawler.pipelines.BbcwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.ItbwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompasianawebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
     'genericWebCrawler.genericWebCrawler.pipelines.KontanwebcrawlerPipeline': 300,
->>>>>>> 2be4fb398b8f8fdcdd00ee9116ebcda4d9ba5103
 }
 LOG_LEVEL = 'ERROR'
 
