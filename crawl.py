@@ -11,7 +11,10 @@ def start_scraping_job(
 
 
 if __name__ == '__main__':
-    start_scraping_job("https://www.cnnindonesia.com/nasional/20200607164937-20-510762/risma-usul-ke-khofifah-agar-tak-perpanjang-psbb-surabaya", keywords="warga,ternak", depth=0)
+    start_scraping_job("https://megapolitan.kompas.com/read/2020/06/13/10504401/ruben-onsu-berjuang-demi-perebutkan-nama-bensu-akhirnya-kalah-di-ma", keywords="warga,ternak", depth=0)
+
+# if __name__ == '__main__':
+#     start_scraping_job("https://www.cnnindonesia.com/nasional/20200607164937-20-510762/risma-usul-ke-khofifah-agar-tak-perpanjang-psbb-surabaya", keywords="warga,ternak", depth=0)
 
 # if __name__ == "__main__":
 #     start_scraping_job("pilkada kompas.com 2020", keywords="pilkada, kompas, 2020", depth=0)

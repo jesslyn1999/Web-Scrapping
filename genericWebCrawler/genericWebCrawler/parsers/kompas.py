@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
 from genericWebCrawler.genericWebCrawler.items import KompaswebcrawlerItem
 
+import requests
 
 class KompasParser(GenericParser):
     domain_name = "*kompas.com"
@@ -17,6 +18,30 @@ class KompasParser(GenericParser):
         self._item["URLNews"] = response.meta["url"]
         self._item["Body"] = []
         self._item["FollowLinks"] = list(self.get_all_links(response, keywords))
+
+        # Comment scraping section:
+        self._item["Comments"] = []
+        bsoup = BeautifulSoup(response.body, 'html.parser')
+        commentAPIURL = "https://apis.kompas.com/api/comment/list?urlpage=" + response.meta["url"] + "&json"
+        # print(commentAPIURL)
+        r = requests.get("https://apis.kompas.com/api/comment/list",
+            params = {
+                "urlpage": response.meta["url"],
+                "json": "",
+                "limit": 1000
+            })
+
+        results = r.json()
+        commentArray = [t for t in results['result']['komentar']]
+        for x in commentArray:
+            temp_dict = {}
+            temp_dict["Author"] = x['user_fullname']
+            temp_dict["Content"] = x['comment_text']
+            temp_dict["Likes"] = x['num_like']
+            temp_dict['Dislikes'] = x['num_dislike']
+            self._item["Comments"].append(temp_dict)
+
+        # articleId = bsoup.find("meta", {"name":"articleid"})["content"]
 
         try:
             temp_read_time = bsoup.find("div", {"class": "read__time"}).get_text().split('-')

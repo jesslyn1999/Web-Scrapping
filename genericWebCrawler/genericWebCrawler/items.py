@@ -24,6 +24,7 @@ class KompaswebcrawlerItem(GenericwebcrawlerItem):
     Source = scrapy.Field()
     Author = scrapy.Field()
     Editor = scrapy.Field()
+    Comments = scrapy.Field()
 
 
 class BbcwebcrawlerItem(GenericwebcrawlerItem):
@@ -59,3 +60,10 @@ class CNNwebcrawlerItem(GenericwebcrawlerItem):
     Author = scrapy.Field()
     Editor = scrapy.Field()
     Comments = scrapy.Field()
+
+
+# Comments : [{
+#   "author" : string,
+#   "content" : string,
+#   ""
+# }]
