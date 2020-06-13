@@ -37,23 +37,14 @@ class GenericwebcrawlerPipeline:
         return item
 
 
-# class KompaswebcrawlerPipeline(GenericwebcrawlerPipeline):
-#     mongo_collection = 'kompas'
-#     item_type = items.KompaswebcrawlerItem
-
-#     def process_item(self, item, spider):
-#         if not isinstance(item, KompaswebcrawlerItem):
-#             return item
-#         for data in item:
-#             if not data:
-#                 raise DropItem("Missing data!")
-#         self.collection.update({'url': item['url']}, dict(item), upsert=True)
-#         return item
+class KompaswebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'kompas'
+    item_type = items.KompaswebcrawlerItem
 
 
-class CNNwebcrawlerPipeline(WebcrawlerPipeline):
+class CNNwebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'cnn'
-    item_type = items.KompasTvwebcrawlerItem
+    item_type = items.CNNwebcrawlerItem
     # @classmethod
     # def from_crawler(cls, crawler):
     #     return cls(

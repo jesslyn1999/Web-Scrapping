@@ -5,4 +5,5 @@ from .kompas import *
 from .kompasiana import *
 from .kompastv import *
 from .kontan import *
+from .cnn import *
 

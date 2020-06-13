@@ -3,3 +3,5 @@ spacy
 pymongo
 bs4
 selenium
+scrapy_splash
+webdriver-manager

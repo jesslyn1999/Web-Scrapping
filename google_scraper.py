@@ -1,4 +1,5 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 import re
@@ -14,7 +15,7 @@ def is_exist_by_id(driver, _id):
 
 def get_google_search_results_link(query, filter_keywords="", max_page=3):
     links = []
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(ChromeDriverManager().install()) # automatically downloads appropriate chromedriver
     driver.get("https://www.google.com/search?q=" + query.replace(" ", "+"))
     repeat_time = 0
     filter_keywords = [keyword.strip() for keyword in filter_keywords.split(',')]

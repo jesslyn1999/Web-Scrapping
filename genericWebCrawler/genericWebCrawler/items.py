@@ -52,14 +52,10 @@ class KontanwebcrawlerItem(GenericwebcrawlerItem):
 class ItbwebcrawlerItem(GenericwebcrawlerItem):
     pass
 
-class KompaswebcrawlerItem(scrapy.Item):
-    title = scrapy.Field()
-    url = scrapy.Field()
-    sentences = scrapy.Field()
-    follow_links = scrapy.Field()
 
-class CNNwebcrawlerItem(scrapy.Item):
-    title = scrapy.Field()
-    url = scrapy.Field()
-    sentences = scrapy.Field()
-    follow_links = scrapy.Field()
+class CNNwebcrawlerItem(GenericwebcrawlerItem):
+    Time = scrapy.Field()
+    Source = scrapy.Field()
+    Author = scrapy.Field()
+    Editor = scrapy.Field()
+    Comments = scrapy.Field()
