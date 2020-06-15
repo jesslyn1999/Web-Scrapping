@@ -4,6 +4,7 @@ from genericWebCrawler.genericWebCrawler.items import KompaswebcrawlerItem
 
 import requests
 
+
 class KompasParser(GenericParser):
     domain_name = "*kompas.com"
 
@@ -17,20 +18,18 @@ class KompasParser(GenericParser):
         self._item["Title"] = bsoup.title.string
         self._item["URLNews"] = response.meta["url"]
         self._item["Body"] = []
-        self._item["FollowLinks"] = list(self.get_all_links(response, keywords))
+        self._item["FollowLinks"] = list(
+            self.get_all_links(response, keywords))
 
         # Comment scraping section:
         self._item["Comments"] = []
-        bsoup = BeautifulSoup(response.body, 'html.parser')
-        commentAPIURL = "https://apis.kompas.com/api/comment/list?urlpage=" + response.meta["url"] + "&json"
-        # print(commentAPIURL)
-        r = requests.get("https://apis.kompas.com/api/comment/list",
-            params = {
-                "urlpage": response.meta["url"],
-                "json": "",
-                "limit": 1000
-            })
-
+        commentAPIURL = "https://apis.kompas.com/api/comment/list"
+        r = requests.get(commentAPIURL,
+                         params={
+                             "urlpage": response.meta["url"],
+                             "json": "",
+                             "limit": 1000
+                         })
         results = r.json()
         commentArray = [t for t in results['result']['komentar']]
         for x in commentArray:
@@ -40,11 +39,11 @@ class KompasParser(GenericParser):
             temp_dict["Likes"] = x['num_like']
             temp_dict['Dislikes'] = x['num_dislike']
             self._item["Comments"].append(temp_dict)
-
-        # articleId = bsoup.find("meta", {"name":"articleid"})["content"]
+        # Comment scraping section end
 
         try:
-            temp_read_time = bsoup.find("div", {"class": "read__time"}).get_text().split('-')
+            temp_read_time = bsoup.find(
+                "div", {"class": "read__time"}).get_text().split('-')
             if len(temp_read_time) == 2:
                 self._item["Time"] = temp_read_time[0].strip()
                 self._item["Source"] = temp_read_time[1].strip()
@@ -53,8 +52,10 @@ class KompasParser(GenericParser):
 
             temp_author = bsoup.find("div", {"id": "penulis"}).find("a")
             temp_editor = bsoup.find("div", {"id": "editor"}).find("a")
-            self._item["Author"] = {"Name": temp_author.get_text(), "URLProfile": temp_author.get('href')}
-            self._item["Editor"] = {"Name": temp_editor.get_text(), "URLProfile": temp_editor.get('href')}
+            self._item["Author"] = {
+                "Name": temp_author.get_text(), "URLProfile": temp_author.get('href')}
+            self._item["Editor"] = {
+                "Name": temp_editor.get_text(), "URLProfile": temp_editor.get('href')}
         except AttributeError:
             pass
 
@@ -64,7 +65,8 @@ class KompasParser(GenericParser):
             child = p_child.get_text()
             string = child.strip()
             doc = self.nlp(string)
-            sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
+            sentences = [" ".join(sent.string.strip().split())
+                         for sent in doc.sents]
             self._item["Body"].extend(sentences)
 
         return self._item

@@ -37,6 +37,7 @@ class KompasianawebcrawlerItem(GenericwebcrawlerItem):
     LastSeenNumber = scrapy.Field()
     LikeNumber = scrapy.Field()
     CommentNumber = scrapy.Field()
+    Comments = scrapy.Field()
 
 
 class KompasTvwebcrawlerItem(GenericwebcrawlerItem):
