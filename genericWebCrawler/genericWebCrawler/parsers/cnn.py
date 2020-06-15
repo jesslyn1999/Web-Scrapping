@@ -6,6 +6,7 @@ from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
 import re
 import requests
 
+
 class CNNParser(GenericParser):
     domain_name = "*cnnindonesia.com"
 
@@ -16,8 +17,16 @@ class CNNParser(GenericParser):
         # articleid = re.search('(\d+)-(\d+)-(\d+)', response.meta["url"]).group(3)
         # print(f"request for article {articleid}")
 
+        self._item = CNNwebcrawlerItem()
         bsoup = BeautifulSoup(response.body, 'html.parser')
-        articleId = bsoup.find("meta", {"name":"articleid"})["content"]
+        self._item["Title"] = bsoup.title.string
+        self._item["URLNews"] = response.meta["url"]
+        self._item["Body"] = []
+        self._item["FollowLinks"] = list(
+            self.get_all_links(response, keywords))
+        # Comment scraping section:
+
+        articleId = bsoup.find("meta", {"name": "articleid"})["content"]
         query = """
         { 
         search(type: "comment",size: 10 ,page:1,sort:"newest", adsLabelKanal: "cnn_nasional", adsEnv: "desktop", query: [{name: "news.artikel", terms: "%s" } , {name: "news.site", terms: "cnn"} ]) { 
@@ -74,20 +83,13 @@ class CNNParser(GenericParser):
         }""" % articleId
 
         r = requests.get("https://newcomment.detik.com/graphql",
-            params = {
-                "query": query
-            })
+                         params={
+                             "query": query
+                         })
 
         results = r.json()
-        commentArray = [t for t in results["data"]["search"]["hits"]["results"]]
-
-        self._item = CNNwebcrawlerItem()
-
-        self._item["Title"] = bsoup.title.string
-        self._item["URLNews"] = response.meta["url"]
-        self._item["Body"] = []
-        self._item["FollowLinks"] = list(
-            self.get_all_links(response, keywords))
+        commentArray = [t for t in results["data"]
+                        ["search"]["hits"]["results"]]
         self._item["Comments"] = []
 
         for comment in commentArray:
@@ -98,6 +100,7 @@ class CNNParser(GenericParser):
             temp_dict["Content"] = comment['content']
             temp_dict["Likes"] = comment['like']
             self._item["Comments"].append(temp_dict)
+        # Comment scraping section end
 
         try:
             temp_read_time = bsoup.find(
@@ -118,7 +121,7 @@ class CNNParser(GenericParser):
             pass
 
         # FILL BODY: for CNN text is located under this id:
-        p_children = bsoup.find_all("div", {"id":"detikdetailtext"})
+        p_children = bsoup.find_all("div", {"id": "detikdetailtext"})
 
         for p_child in p_children:
             child = p_child.get_text()
