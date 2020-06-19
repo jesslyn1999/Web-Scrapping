@@ -4,3 +4,4 @@ pymongo
 bs4
 selenium
 webdriver-manager
+requests

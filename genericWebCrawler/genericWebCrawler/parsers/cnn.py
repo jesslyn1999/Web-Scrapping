@@ -88,19 +88,23 @@ class CNNParser(GenericParser):
                          })
 
         results = r.json()
-        commentArray = [t for t in results["data"]
-                        ["search"]["hits"]["results"]]
-        self._item["Comments"] = []
 
-        for comment in commentArray:
-            if(comment["status"] == None):
-                continue
-            temp_dict = {}
-            temp_dict["Author"] = comment['author']['name']
-            temp_dict["Content"] = comment['content']
-            temp_dict["Likes"] = comment['like']
-            self._item["Comments"].append(temp_dict)
-        # Comment scraping section end
+        try:
+            commentArray = [t for t in results["data"]
+                            ["search"]["hits"]["results"]]
+            self._item["Comments"] = []
+
+            for comment in commentArray:
+                if(comment["status"] == None):
+                    continue
+                temp_dict = {}
+                temp_dict["Author"] = comment['author']['name']
+                temp_dict["Content"] = comment['content']
+                temp_dict["Likes"] = comment['like']
+                self._item["Comments"].append(temp_dict)
+            # Comment scraping section end
+        except TypeError:
+            pass
 
         try:
             temp_read_time = bsoup.find(

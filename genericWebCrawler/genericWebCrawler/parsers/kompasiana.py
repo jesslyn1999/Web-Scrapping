@@ -60,45 +60,47 @@ class KompasianaParser(GenericParser):
             'cookie': 'publica_session_id=7be8b909-7595-c597-23fc-ffd550839d86; k124951894=k124951894; ukid=b9f9c3ee10a0cfe37fa22158e4628ce5; _ga=GA1.2.1534611824.1592201035; _gid=GA1.2.1418603594.1592201035; __asc=a137e7e3172b693bf005f2573d8; __auc=a137e7e3172b693bf005f2573d8; _gaexp=GAX1.2.emxowUjBQFyKHvvjKtNbbA.18517.x474; forkrtg={"generic":"29112019"}; AMP_TOKEN=%24NOT_FOUND; publica_user_id=b73b8cf0-29ec-4456-a653-54aa79a9da84; __gads=ID=dec3797e02d77cba:T=1592201041:S=ALNI_MZykgtlmgyRk2yCZ1uBphFB_yKC8g; OB-USER-TOKEN=73357436-69c1-4bc9-a08b-73f96e3ad304; fmguid={"id":"1dGnWQH8FPRl1lcNnunMsTf1kdK","cat":{"l1":{"1":"c15","2":"c3"},"l2":{"1":"c15","2":"c3"}}}; _gat_UA-3296578-31=1',
         }
         metadata = bsoup.find("div", {"id": "id_post"})
-        post_id = metadata["data-id"]
-        post_channel_id = metadata["data-recipientid"]
-        params = (
-            ('post_id', post_id),
-            ('post_channel_id', post_channel_id),
-            ('page', '1'),
-            ('per_page', '1000'),
-        )
-        r = requests.get(commentAPIURL, headers=headers, params=params)
-        results = r.json()
-        # results are in form of HTML elements for kompasiana
-        commentElement = results['view']
-        bsoupComment = BeautifulSoup(commentElement, "html.parser")
-        commentDivs = bsoupComment.findAll("div", {
-            "class": "komentar-content"
-        })
-        for div in commentDivs:
-            tempdict = {}
-            # fill comments author
-            h1User = div.find("h1", {
-                "class": "komentar-user"
+
+        if metadata:
+            post_id = metadata["data-id"]
+            post_channel_id = metadata["data-recipientid"]
+            params = (
+                ('post_id', post_id),
+                ('post_channel_id', post_channel_id),
+                ('page', '1'),
+                ('per_page', '1000'),
+            )
+            r = requests.get(commentAPIURL, headers=headers, params=params)
+            results = r.json()
+            # results are in form of HTML elements for kompasiana
+            commentElement = results['view']
+            bsoupComment = BeautifulSoup(commentElement, "html.parser")
+            commentDivs = bsoupComment.findAll("div", {
+                "class": "komentar-content"
             })
-            username = h1User.findChildren("a", recursive=False)[0]
-            tempdict["Author"] = username.getText()
-            # fill comments content
-            contentP = div.find("p", {
-                "class": "komentar-text"
-            })
-            tempdict["Content"] = contentP.getText()
-            # fill comments likes
-            likeSpan = div.find("span", {
-                "id": "like-counter"
-            })
-            try:
-                tempdict["Likes"] = likeSpan.getText()
-            except:
-                tempdict["Likes"] = 0
-            self._item["Comments"].append(tempdict)
-        # Comment scraping section end
+            for div in commentDivs:
+                tempdict = {}
+                # fill comments author
+                h1User = div.find("h1", {
+                    "class": "komentar-user"
+                })
+                username = h1User.findChildren("a", recursive=False)[0]
+                tempdict["Author"] = username.getText()
+                # fill comments content
+                contentP = div.find("p", {
+                    "class": "komentar-text"
+                })
+                tempdict["Content"] = contentP.getText()
+                # fill comments likes
+                likeSpan = div.find("span", {
+                    "id": "like-counter"
+                })
+                try:
+                    tempdict["Likes"] = likeSpan.getText()
+                except:
+                    tempdict["Likes"] = 0
+                self._item["Comments"].append(tempdict)
+            # Comment scraping section end
 
         p_children = bsoup.find_all("p")
 

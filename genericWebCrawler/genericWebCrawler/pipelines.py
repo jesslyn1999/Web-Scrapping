@@ -28,7 +28,7 @@ class GenericwebcrawlerPipeline:
         self._client.close()
 
     def process_item(self, item, spider):
-        if not (type(item) is self.item_type):
+        if not (type(item) is self.item_type and item["Body"]):
             return item
         for data in item:
             if not data:

@@ -77,7 +77,8 @@ def create_crawler_class():
 
             if not response.meta["parent_url"] in result:
                 result[response.meta["parent_url"]] = []
-            result[response.meta["parent_url"]].append(item)
+            if item["Body"]:
+                result[response.meta["parent_url"]].append(item)
             if type(item) is GenericwebcrawlerItem:
                 print('Urls haven\'t yet to be specifically handled: %s' %
                       item['URLNews'])
