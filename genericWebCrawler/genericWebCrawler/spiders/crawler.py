@@ -43,7 +43,7 @@ def finish_crawl_request(crawl_request, request_id, result):
 
 
 def begin_crawl(root_urls, filter_keywords, allowed_domains, depth):
-    print("[*] Begin crawling", root_urls)
+    print("[*] Begin crawling", len(root_urls), "url(s)")
     global parserHelper
     parserHelper = ParserHelper(filter_keywords)
     parserHelper.register(
@@ -70,7 +70,8 @@ def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None
     result = begin_crawl(root_urls_list, filter_keywords, allowed_domains, depth)
     insertion_result = finish_crawl_request(crawl_request, request_id, result)
 
-    print("[x] Google scraping insertion result", insertion_result)
+    print("[x] Inserted Google scraping result", insertion_result)
+    return result
 
 
 def load_scraper(root_urls, filter_keywords=None, allowed_domains=None, depth=0):
@@ -78,4 +79,5 @@ def load_scraper(root_urls, filter_keywords=None, allowed_domains=None, depth=0)
     result = begin_crawl(root_urls, filter_keywords, allowed_domains, depth)
     insertion_result = finish_crawl_request(crawl_request, request_id, result)
 
-    print("[x] URL scraping insertion result", insertion_result)
+    print("[x] Inserted URL scraping result", insertion_result)
+    return result
