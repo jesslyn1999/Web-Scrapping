@@ -1,5 +1,5 @@
-from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
-from genericWebCrawler.genericWebCrawler.items import ItbwebcrawlerItem
+from src.genericWebCrawler.parsers.generic import GenericParser
+from src.genericWebCrawler.items import ItbwebcrawlerItem
 
 
 class ItbParser(GenericParser):

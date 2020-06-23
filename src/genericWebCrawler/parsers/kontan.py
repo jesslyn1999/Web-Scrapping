@@ -1,7 +1,15 @@
 from bs4 import BeautifulSoup
-from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
-from genericWebCrawler.genericWebCrawler.items import KontanwebcrawlerItem
+from src.genericWebCrawler.parsers.generic import GenericParser
+from src.genericWebCrawler.items import KontanwebcrawlerItem
 import re
+import dateparser
+
+
+def time_gmt_format(str_datetime):
+    # from string like "Selasa, 23 Juni 2020 / 07:10 WIB" to GMT yyyymmddhhmmss
+    date_time_obj = dateparser.parse(str_datetime, date_formats=['%A, %d %B %Y / %H:%M %Z'],
+                                     settings={'TO_TIMEZONE': 'GMT'})
+    return date_time_obj.strftime('%Y%m%d%H%M%S')
 
 
 class KontanParser(GenericParser):
@@ -21,6 +29,8 @@ class KontanParser(GenericParser):
 
         try:
             self._item["Time"] = bsoup.find("div", {"class": "fs14 ff-opensans font-gray"}).get_text().strip()
+            self._item["StandardTime"] = time_gmt_format(self._item["Time"])
+
             temp_list_first_p = bsoup.find("div", {"itemprop": "articleBody"}).find("p").contents
             temp_list = [re.sub(r"[:|\n]|<\s*b[^>]*>|<\s*/\s*b>", "", str(tag)).strip()
                          for tag in temp_list_first_p]
@@ -37,7 +47,8 @@ class KontanParser(GenericParser):
             child = p_child.get_text()
             string = child.strip()
             doc = self.nlp(string)
-            sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
+            sentences = [" ".join(sent.string.strip().split()).translate(self.replace_punctuation)
+                         for sent in doc.sents]
             self._item["Body"].extend(sentences)
 
         return self._item

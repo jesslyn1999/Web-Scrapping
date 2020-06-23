@@ -1,13 +1,13 @@
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from .urlExtractor import create_crawler_class
-from genericWebCrawler.genericWebCrawler import settings as local_settings
-from genericWebCrawler.genericWebCrawler.parser import ParserHelper
-from genericWebCrawler.genericWebCrawler import parsers
+from src.genericWebCrawler import settings as local_settings
+from src.genericWebCrawler.parser import ParserHelper
+from src.genericWebCrawler import parsers
 from db.db import crawl_result_collection, crawl_request_collection
 from db.models import CrawlResult, CrawlRequest
 import datetime
-import google_scraper
+from src.selenium import google_scraper
 
 
 parserHelper = None  # exported

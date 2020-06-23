@@ -1,6 +1,7 @@
 import pymongo
 from scrapy.exceptions import DropItem
-from genericWebCrawler.genericWebCrawler import items
+from src.genericWebCrawler import items
+from src.util.word_processing import *
 
 
 class GenericwebcrawlerPipeline:
@@ -28,6 +29,8 @@ class GenericwebcrawlerPipeline:
         self._client.close()
 
     def process_item(self, item, spider):
+        item['StemmedBody'] = [[stem_id(word) for word in sentence.split() if word.lower() not in get_stopwords()]
+                               for sentence in item['Body']]
         if not (type(item) is self.item_type and item["Body"]):
             return item
         for data in item:
@@ -45,22 +48,7 @@ class KompaswebcrawlerPipeline(GenericwebcrawlerPipeline):
 class CNNwebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'cnn'
     item_type = items.CNNwebcrawlerItem
-    # @classmethod
-    # def from_crawler(cls, crawler):
-    #     return cls(
-    #         mongo_uri=crawler.settings.get('MONGODB_URI'),
-    #         mongo_db=crawler.settings.get('MONGODB_DB', 'default_items'),
-    #         mongo_collection='cnn',
-    #     )
 
-    # def process_item(self, item, spider):
-    #     if not isinstance(item, CNNwebcrawlerItem):
-    #         return item
-    #     for data in item:
-    #         if not data:
-    #             raise DropItem("Missing data!")
-    #     self.collection.update({'url': item['url']}, dict(item), upsert=True)
-    #     return item
 
 class KompasTvwebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'kompas_tv'

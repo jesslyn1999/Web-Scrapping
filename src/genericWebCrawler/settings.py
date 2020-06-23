@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for genericWebCrawler project
+# Scrapy settings for src project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -10,25 +10,25 @@
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 from db.db import mongodb_db, mongodb_uri
 
-BOT_NAME = 'genericWebCrawler'
+BOT_NAME = 'src'
 
-SPIDER_MODULES = ['genericWebCrawler.genericWebCrawler.spiders']
-NEWSPIDER_MODULE = 'genericWebCrawler.genericWebCrawler.spiders'
+SPIDER_MODULES = ['src.genericWebCrawler.spiders']
+NEWSPIDER_MODULE = 'src.genericWebCrawler.spiders'
 ITEM_PIPELINES = {
-    'genericWebCrawler.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.KompaswebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.CNNwebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.BbcwebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.ItbwebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.KompasianawebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
-    'genericWebCrawler.genericWebCrawler.pipelines.KontanwebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.KompaswebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.CNNwebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.BbcwebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.ItbwebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.KompasianawebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.KontanwebcrawlerPipeline': 300,
 }
 LOG_LEVEL = 'ERROR'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'genericWebCrawler (+http://www.yourdomain.com)'
+#USER_AGENT = 'src (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -62,13 +62,13 @@ MONGODB_DB = mongodb_db
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 # SPIDER_MIDDLEWARES = {
-#    'genericWebCrawler.middlewares.GenericwebcrawlerSpiderMiddleware': 543,
+#    'src.genericWebCrawler.middlewares.GenericwebcrawlerSpiderMiddleware': 543,
 # }
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 # DOWNLOADER_MIDDLEWARES = {
-#    'genericWebCrawler.middlewares.GenericwebcrawlerDownloaderMiddleware': 543,
+#    'src.genericWebCrawler.middlewares.GenericwebcrawlerDownloaderMiddleware': 543,
 # }
 
 # Enable or disable extensions
@@ -80,7 +80,7 @@ MONGODB_DB = mongodb_db
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # ITEM_PIPELINES = {
-#    'genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
+#    'src.genericWebCrawler.pipelines.GenericwebcrawlerPipeline': 300,
 # }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

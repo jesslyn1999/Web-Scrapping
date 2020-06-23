@@ -2,7 +2,7 @@ import os
 import traceback
 import json
 import pika
-from genericWebCrawler.genericWebCrawler.spiders.crawler import load_scraper, load_scraper_google
+from src.genericWebCrawler.spiders.crawler import load_scraper, load_scraper_google
 
 
 AMQP_REQUEST_EXCHANGE = 'crawl_request'

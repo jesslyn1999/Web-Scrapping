@@ -1,5 +1,5 @@
-from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
-from genericWebCrawler.genericWebCrawler.items import BbcwebcrawlerItem
+from src.genericWebCrawler.parsers.generic import GenericParser
+from src.genericWebCrawler.items import BbcwebcrawlerItem
 
 
 class BbcParser(GenericParser):

@@ -2,13 +2,15 @@ import re
 from bs4 import BeautifulSoup
 from scrapy.linkextractors import LinkExtractor
 from spacy.lang.en import English
-from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
+from src.genericWebCrawler.items import GenericwebcrawlerItem
+import string
 
 
 class GenericParser(object):
     domain_name = '*'
     nlp = English()
     nlp.add_pipe(nlp.create_pipe("sentencizer"))
+    replace_punctuation = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
 
     def __init__(self):
         self._item = {}
@@ -29,7 +31,8 @@ class GenericParser(object):
             child = p_child.get_text()
             string = child.strip()
             doc = self.nlp(string)
-            sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
+            sentences = [" ".join(sent.string.strip().split())
+                            .translate(self.replace_punctuation) for sent in doc.sents]
             self._item['Body'].extend(sentences)
         return self._item
 

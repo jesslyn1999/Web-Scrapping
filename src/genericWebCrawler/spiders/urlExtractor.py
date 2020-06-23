@@ -4,8 +4,8 @@ from scrapy.linkextractors import LinkExtractor
 from spacy.tokens import Token
 from spacy.lang.en import English
 from urllib.parse import urlparse
-from genericWebCrawler.genericWebCrawler.items import GenericwebcrawlerItem
-from genericWebCrawler.genericWebCrawler.spiders import crawler
+from src.genericWebCrawler.items import GenericwebcrawlerItem
+from src.genericWebCrawler.spiders import crawler
 
 def create_crawler_class():
     Token.set_extension("tag", default=False)

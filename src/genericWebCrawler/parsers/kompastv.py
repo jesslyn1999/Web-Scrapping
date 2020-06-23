@@ -1,6 +1,14 @@
 from bs4 import BeautifulSoup
-from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
-from genericWebCrawler.genericWebCrawler.items import KompasTvwebcrawlerItem
+from src.genericWebCrawler.parsers.generic import GenericParser
+from src.genericWebCrawler.items import KompasTvwebcrawlerItem
+import dateparser
+
+
+def time_gmt_format(str_datetime):
+    # from string like "Senin, 22 Juni 2020 | 15:30 WIB" to GMT yyyymmddhhmmss
+    date_time_obj = dateparser.parse(str_datetime, date_formats=['%A, %d %B %Y | %H:%M %Z'],
+                                     settings={'TO_TIMEZONE': 'GMT'})
+    return date_time_obj.strftime('%Y%m%d%H%M%S')
 
 
 class KompasTvParser(GenericParser):
@@ -20,6 +28,7 @@ class KompasTvParser(GenericParser):
 
         try:
             self._item["Time"] = bsoup.find("span", {"class": "time-news"}).get_text().strip()
+            self._item["StandardTime"] = time_gmt_format(self._item["Time"])
             self._item["Editor"] = bsoup.find("span", {"class": "pub"}).get_text()
         except AttributeError:
             pass
@@ -30,7 +39,8 @@ class KompasTvParser(GenericParser):
             child = p_child.get_text()
             string = child.strip()
             doc = self.nlp(string)
-            sentences = [" ".join(sent.string.strip().split()) for sent in doc.sents]
+            sentences = [" ".join(sent.string.strip().split()).translate(self.replace_punctuation)
+                         for sent in doc.sents]
             self._item["Body"].extend(sentences)
 
         return self._item

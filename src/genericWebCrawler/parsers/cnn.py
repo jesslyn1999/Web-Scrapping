@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from spacy.lang.en import English
-from genericWebCrawler.genericWebCrawler.items import CNNwebcrawlerItem
-from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
+from src.genericWebCrawler.items import CNNwebcrawlerItem
+from src.genericWebCrawler.parsers.generic import GenericParser
 
 import re
 import requests

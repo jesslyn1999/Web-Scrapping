@@ -6,3 +6,5 @@ selenium
 webdriver-manager
 requests
 pika
+Sastrawi
+dateparser

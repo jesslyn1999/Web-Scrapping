@@ -13,6 +13,8 @@ class GenericwebcrawlerItem(scrapy.Item):
     URLNews = scrapy.Field()
     Title = scrapy.Field()
     Body = scrapy.Field()
+    StemmedBody = scrapy.Field()
+    StandardTime = scrapy.Field()
     FollowLinks = scrapy.Field()
 
     def to_json(self):

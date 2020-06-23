@@ -1,9 +1,16 @@
 from bs4 import BeautifulSoup
-from genericWebCrawler.genericWebCrawler.parsers.generic import GenericParser
-from genericWebCrawler.genericWebCrawler.items import KompasianawebcrawlerItem
+from src.genericWebCrawler.parsers.generic import GenericParser
+from src.genericWebCrawler.items import KompasianawebcrawlerItem
 import unicodedata
-
 import requests
+import dateparser
+
+
+def time_gmt_format(str_datetime):
+    # from string like "29 Mei 2020   09:00" to GMT yyyymmddhhmmss
+    date_time_obj = dateparser.parse(str_datetime, date_formats=['%d %B %Y  %H:%M'],
+                                     settings={'TO_TIMEZONE': 'GMT'})
+    return date_time_obj.strftime('%Y%m%d%H%M%S')
 
 
 class KompasianaParser(GenericParser):
@@ -31,6 +38,9 @@ class KompasianaParser(GenericParser):
                 "NFKD", span_elements[0].get_text()).strip()
             self._item["LastEdit"] = unicodedata.normalize("NFKD", span_elements[1].get_text())\
                 .replace("Diperbarui:", "").strip()
+
+            self._item["StandardCreatedTime"] = time_gmt_format(self._item["CreatedTime"])
+            self._item["StandardLastEditTime"] = time_gmt_format(self._item["LastEdit"])
 
             self._item["LastSeenNumber"] = temp_header.find(
                 "span", {"id": "post-counter"}).get_text()
@@ -108,7 +118,7 @@ class KompasianaParser(GenericParser):
             child = p_child.get_text()
             string = child.strip()
             doc = self.nlp(string)
-            sentences = [" ".join(sent.string.strip().split())
+            sentences = [" ".join(sent.string.strip().split()).translate(self.replace_punctuation)
                          for sent in doc.sents]
             self._item["Body"].extend(sentences)
 
