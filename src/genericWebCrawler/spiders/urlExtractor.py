@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 from src.genericWebCrawler.items import GenericwebcrawlerItem
 from src.genericWebCrawler.spiders import crawler
 
+
 def create_crawler_class():
     Token.set_extension("tag", default=False)
     result = {}
@@ -22,6 +23,9 @@ def create_crawler_class():
                 "[LE] Source: %s Depth: %s Args : %s Kwargs: %s", root, depth, args, kwargs)
             self.options = kwargs
             self.depth = depth
+            print('args: ', args)
+            print('kwargs: ', kwargs)
+            self.request_id = kwargs['request_id']
             self.traversedLinks = set()
             if isinstance(root, (list, tuple, set)):
                 self.start_urls = root
@@ -54,7 +58,7 @@ def create_crawler_class():
         def start_requests(self, *args, **kwargs):
             for start_url in self.start_urls:
                 yield Request("%s" % start_url, callback=self.parse_req,
-                                    meta={"url": start_url, "parent_url": start_url})
+                                    meta={"url": start_url, "parent_url": start_url, "request_id": self.request_id})
 
         def parse_req(self, response):
             # initial scrape -> must be scraped no matter what(serves as
@@ -82,6 +86,7 @@ def create_crawler_class():
             if type(item) is GenericwebcrawlerItem:
                 print('Urls haven\'t yet to be specifically handled: %s' %
                       item['URLNews'])
+            item['RequestId'] = [response.meta["request_id"]]
             yield item
 
         def clean_options(self):

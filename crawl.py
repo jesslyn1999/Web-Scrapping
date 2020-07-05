@@ -18,8 +18,14 @@ def start_scraping_job(
 # if __name__ == '__main__':
 #     load_scraper("https://www.cnnindonesia.com/nasional/20200607164937-20-510762/risma-usul-ke-khofifah-agar-tak-perpanjang-psbb-surabaya", filter_keywords="warga,ternak", depth=0)
 
-if __name__ == "__main__":
-    load_scraper_google("pilkada kompas.com 2020", filter_keywords="pilkada, kompas, 2020", depth=0)
+# if __name__ == "__main__":
+#     load_scraper_google("pilkada kompas.com 2020", filter_keywords="pilkada, kompas, 2020", depth=0)
 
 # if __name__ == "__main__":
 #     load_scraper("https://nasional.kompas.com/read/2020/05/29/07092271/ini-alasan-pemerintah-tak-mau-tunda-pilkada-hingga-covid-19-berakhir?page=all", filter_keywords="pilkada, 2020", depth=0)
+
+# if __name__ == "__main__":
+#     load_scraper("https://finance.detik.com/berita-ekonomi-bisnis/d-5080751/deretan-nama-menteri-ekonomi-dalam-isu-liar-reshuffle/1", filter_keywords="pilkada, 2020", depth=0)
+
+if __name__ == "__main__":
+    load_scraper("https://bola.tempo.co/read/1361349/menang-telak-5-2-manchester-united-geser-chelsea-di-posisi-4/full&view=ok", filter_keywords="pilkada, 2020", depth=0)

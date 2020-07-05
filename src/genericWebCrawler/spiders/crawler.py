@@ -42,20 +42,21 @@ def finish_crawl_request(crawl_request, request_id, result):
     return insertion_result
 
 
-def begin_crawl(root_urls, filter_keywords, allowed_domains, depth):
+def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth):
     print("[*] Begin crawling", len(root_urls), "url(s)")
     global parserHelper
     parserHelper = ParserHelper(filter_keywords)
     parserHelper.register(
         [parsers.BbcParser(), parsers.ItbParser(), parsers.KompasParser(), parsers.KompasianaParser(),
-         parsers.KompasTvParser(), parsers.KontanParser(), parsers.CNNParser(), parsers.GenericParser()])
+         parsers.KompasTvParser(), parsers.KontanParser(), parsers.CNNParser(), parsers.TempoParser(),
+         parsers.GenericParser()])
 
     crawler_settings = Settings()
     crawler_settings.setmodule(local_settings)
     UrlExtractor, result = create_crawler_class()
 
     process = CrawlerProcess(settings=crawler_settings)  # ALT: CrawlerProcess(get_project_settings())
-    process.crawl(UrlExtractor, root=root_urls, allow_domains=allowed_domains, depth=depth)
+    process.crawl(UrlExtractor, root=root_urls, allow_domains=allowed_domains, depth=depth, request_id=request_id)
     process.start()  # the script will block here until the crawling is finished
 
     print("[x] Finished crawling")
@@ -67,7 +68,7 @@ def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None
     root_urls_list = google_scraper.get_google_search_results_link(search_query, filter_keywords, max_page)
 
     crawl_request, request_id = init_crawl_request(search_query, filter_keywords, root_urls_list)
-    result = begin_crawl(root_urls_list, filter_keywords, allowed_domains, depth)
+    result = begin_crawl(request_id, root_urls_list, filter_keywords, allowed_domains, depth)
     insertion_result = finish_crawl_request(crawl_request, request_id, result)
 
     print("[x] Inserted Google scraping result", insertion_result)
@@ -76,7 +77,7 @@ def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None
 
 def load_scraper(root_urls, filter_keywords=None, allowed_domains=None, depth=0):
     crawl_request, request_id = init_crawl_request(None, filter_keywords, root_urls)
-    result = begin_crawl(root_urls, filter_keywords, allowed_domains, depth)
+    result = begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth)
     insertion_result = finish_crawl_request(crawl_request, request_id, result)
 
     print("[x] Inserted URL scraping result", insertion_result)

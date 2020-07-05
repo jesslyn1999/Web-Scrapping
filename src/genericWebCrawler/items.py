@@ -10,10 +10,13 @@ import json
 
 
 class GenericwebcrawlerItem(scrapy.Item):
+    RequestId = scrapy.Field()
     URLNews = scrapy.Field()
     Title = scrapy.Field()
     Body = scrapy.Field()
+    StemmedTitle = scrapy.Field()
     StemmedBody = scrapy.Field()
+    StemmedComments = scrapy.Field()
     StandardTime = scrapy.Field()
     FollowLinks = scrapy.Field()
 
@@ -62,6 +65,16 @@ class CNNwebcrawlerItem(GenericwebcrawlerItem):
     Source = scrapy.Field()
     Author = scrapy.Field()
     Editor = scrapy.Field()
+    Comments = scrapy.Field()
+
+
+class TempowebcrawlerItem(GenericwebcrawlerItem):
+    Time = scrapy.Field()
+    Source = scrapy.Field()
+    TimeModified = scrapy.Field()
+    Author = scrapy.Field()
+    Editor = scrapy.Field()
+    Description = scrapy.Field()
     Comments = scrapy.Field()
 
 

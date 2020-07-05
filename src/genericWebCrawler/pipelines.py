@@ -31,6 +31,8 @@ class GenericwebcrawlerPipeline:
     def process_item(self, item, spider):
         item['StemmedBody'] = [[stem_id(word) for word in sentence.split() if word.lower() not in get_stopwords()]
                                for sentence in item['Body']]
+        item['StemmedTitle'] = [stem_id(word) for word in item['Title'].split() if word.lower() not in get_stopwords()]
+        item['StemmedComments'] = []
         if not (type(item) is self.item_type and item["Body"]):
             return item
         for data in item:
@@ -73,3 +75,8 @@ class KompasianawebcrawlerPipeline(GenericwebcrawlerPipeline):
 class KontanwebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'kontan'
     item_type = items.KontanwebcrawlerItem
+
+
+class TempowebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'tempo'
+    item_type = items.TempowebcrawlerItem

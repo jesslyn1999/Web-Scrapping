@@ -14,7 +14,7 @@ def stem_id(words):
         return stemmer.stem(words)
 
 
-def get_stopwords(relative_path='resource/stopword.txt'):
+def get_stopwords(relative_path='res/stopword.txt'):
     global stopwords
     if not stopwords:
         with open(os.path.abspath(relative_path)) as in_f:
