@@ -8,7 +8,8 @@ import json
 
 def time_gmt_format(str_datetime):
     # from string like "2020-07-03T20:31:24+07:00" to GMT yyyymmddhhmmss
-    date_time_obj = dateparser.parse(str_datetime, settings={'TO_TIMEZONE': 'GMT'})
+    date_time_obj = dateparser.parse(
+        str_datetime, settings={'TO_TIMEZONE': 'GMT'})
     return date_time_obj.strftime('%Y%m%d%H%M%S')
 
 
@@ -23,7 +24,8 @@ class TempoParser(GenericParser):
         # :nbsp; & punctuation & case folding: lowercase
         bsoup.prettify(formatter=lambda s: s.replace(u'\xa0', ' ').lower())
 
-        temp_content_json = json.loads(bsoup.find("script", type="application/ld+json").string)
+        temp_content_json = json.loads(bsoup.find(
+            "script", type="application/ld+json").string)
         self._item = TempowebcrawlerItem()
 
         self._item["FollowLinks"] = list(
@@ -31,6 +33,28 @@ class TempoParser(GenericParser):
         self._item["URLNews"] = response.meta["url"]
         self._item["Body"] = []
 
+        # comment scraping section:
+        articleURL = bsoup.find('link', {"rel": "original-source"})["href"]
+
+        r = requests.get("https://graph.facebook.com/v2.6/",
+                         params={
+                             "fields": "og_object{comments}",
+                             "id": "https://gaya.tempo.co/read/1361609/ramai-kalung-antivirus-corona-cek-harganya-di-pasaran",
+                             "access_token": "EAALSGqipwgUBAOl0g2RkjKlHgbJSGInUkakUaXLngWkJRQZAmOMw9DJRn32m1ZCbby401Yu14vmt71lVZBEnPCwoj6ZBulOXxDGk0G0a59Qb8KgsfnCK1wFufDwk2bn2iGCtVsHZAHXi4CEaa6OZBYhe96IACtkBIieUhs5ucW2nNfAWkebvqAiEhAjaXvRMtWHGjTIm7eaNT9140l0hZARusLYCj9Wzs02aWOwY3whJQZDZD"
+                         })
+        results = r.json()
+
+        try:
+            self._item["Comments"] = []
+            data = results["og_object"]["comments"]["data"]
+            for comment in data:
+                temp_dict = {}
+                temp_dict["Name"] = comment['from']['name']
+                temp_dict["Content"] = comment['message']
+                self._item["Comments"].append(temp_dict)
+        except AttributeError as e:
+            print(e)
+        
         try:
             self._item["Title"] = temp_content_json["headline"]
             self._item["Source"] = temp_content_json["publisher"]["name"]

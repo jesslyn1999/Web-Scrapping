@@ -27,5 +27,8 @@ def start_scraping_job(
 # if __name__ == "__main__":
 #     load_scraper("https://finance.detik.com/berita-ekonomi-bisnis/d-5080751/deretan-nama-menteri-ekonomi-dalam-isu-liar-reshuffle/1", filter_keywords="pilkada, 2020", depth=0)
 
+# if __name__ == "__main__":
+#     load_scraper("https://bola.tempo.co/read/1361349/menang-telak-5-2-manchester-united-geser-chelsea-di-posisi-4/full&view=ok", filter_keywords="pilkada, 2020", depth=0)
+
 if __name__ == "__main__":
-    load_scraper("https://bola.tempo.co/read/1361349/menang-telak-5-2-manchester-united-geser-chelsea-di-posisi-4/full&view=ok", filter_keywords="pilkada, 2020", depth=0)
+    load_scraper("https://gaya.tempo.co/read/1361609/ramai-kalung-antivirus-corona-cek-harganya-di-pasaran", filter_keywords="corona", depth=0)
