@@ -2,7 +2,7 @@ import os
 import traceback
 import json
 import pika
-from src.genericWebCrawler.spiders.crawler import load_scraper, load_scraper_google
+from src.genericWebCrawler.spiders.crawler import begin_crawl, get_links_from_keyword, init_crawl_request
 
 
 AMQP_REQUEST_EXCHANGE = 'crawl_request'
@@ -20,10 +20,20 @@ def get_follow_links(results):
     return all_follow_links
 
 
-def publish_follow_links(channel, results):
+def publish_follow_links(channel, root_urls, results, request_id, keywords='', allowed_domains=None, depth=0):
     print("[*] Publishing follow links to broker")
     follow_links = get_follow_links(results)
-    body = json.dumps(list(follow_links))
+
+    message = {
+        'request_id': request_id,
+        'root_urls': root_urls,
+        'follow_links': list(follow_links),
+        'keywords': keywords,
+        'allowed_domains': allowed_domains,
+        'depth': depth
+    }
+
+    body = json.dumps(message)
     channel.basic_publish(exchange=AMQP_FOLLOW_LINKS_EXCHANGE, routing_key='', body=body.encode())
     print("[x] Follow links published")
 
@@ -32,20 +42,30 @@ def message_received(channel, message_body):
     data = json.loads(message_body)
     type = data.get('type', 'url')
     search_query = data.get('search_query')
-    keywords = data.get('keywords')
+    keywords = data.get('keywords', '')
     allowed_domains = data.get('allowed_domains')
-    urls = data.get('urls')
+    root_urls = data.get('urls')
+    request_id = data.get('request_id')
     depth = data.get('depth', 0)
 
     if type == 'search':
-        result = load_scraper_google(search_query=search_query, filter_keywords=keywords, allowed_domains=allowed_domains, depth=depth)
-    elif type == 'url':
-        result = load_scraper(root_urls=urls, filter_keywords=keywords, allowed_domains=allowed_domains, depth=depth)
-    else:
-        result = None
+        root_urls = get_links_from_keyword(search_query=search_query, filter_keywords=keywords)
 
-    if result:
-        publish_follow_links(channel, result)
+        if request_id is None:
+            _, request_id = init_crawl_request(search_query=search_query, filter_keywords=keywords, root_urls_list=root_urls)
+
+        results = begin_crawl(request_id=request_id, root_urls=root_urls, filter_keywords=keywords, allowed_domains=allowed_domains, depth=depth, stop_after_crawl=False)
+    elif type == 'url':
+        if request_id is None:
+            _, request_id = init_crawl_request(search_query='', filter_keywords=keywords, root_urls_list=root_urls)
+
+        results = begin_crawl(request_id=request_id, root_urls=root_urls, filter_keywords=keywords, allowed_domains=allowed_domains, depth=depth, stop_after_crawl=False)
+    else:
+        results = None
+
+    if results:
+        publish_follow_links(channel=channel, root_urls=root_urls, results=results,
+                             request_id=request_id, keywords=keywords, allowed_domains=allowed_domains, depth=depth)
 
 def main():
     rabbitmq_url = os.getenv('RABBITMQ_URL')

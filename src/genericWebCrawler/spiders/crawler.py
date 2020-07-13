@@ -23,7 +23,7 @@ def init_crawl_request(search_query, filter_keywords, root_urls_list):
     if not inserted_request_id:
         inserted_request_id = crawl_request_collection.find_one({'SearchQuery': search_query})["_id"]
 
-    return crawl_request, inserted_request_id
+    return crawl_request, str(inserted_request_id)
 
 
 def finish_crawl_request(crawl_request, request_id, result):
@@ -42,7 +42,10 @@ def finish_crawl_request(crawl_request, request_id, result):
     return insertion_result
 
 
-def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth):
+UrlExtractor, result = create_crawler_class()
+
+
+def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth, stop_after_crawl=True):
     print("[*] Begin crawling", len(root_urls), "url(s)")
     global parserHelper
     parserHelper = ParserHelper(filter_keywords)
@@ -53,20 +56,21 @@ def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth):
 
     crawler_settings = Settings()
     crawler_settings.setmodule(local_settings)
-    UrlExtractor, result = create_crawler_class()
 
     process = CrawlerProcess(settings=crawler_settings)  # ALT: CrawlerProcess(get_project_settings())
     process.crawl(UrlExtractor, root=root_urls, allow_domains=allowed_domains, depth=depth, request_id=request_id)
-    process.start()  # the script will block here until the crawling is finished
+    process.start(stop_after_crawl=stop_after_crawl)  # the script will block here until the crawling is finished
 
     print("[x] Finished crawling")
     return result
 
-
-def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None, depth=0, max_page=5):
+def get_links_from_keyword(search_query, filter_keywords="", max_page=5):
     print("[*] Acquiring links from Google")
     root_urls_list = google_scraper.get_google_search_results_link(search_query, filter_keywords, max_page)
+    return root_urls_list
 
+def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None, depth=0, max_page=5):
+    root_urls_list = get_links_from_keyword(search_query, filter_keywords, max_page)
     crawl_request, request_id = init_crawl_request(search_query, filter_keywords, root_urls_list)
     result = begin_crawl(request_id, root_urls_list, filter_keywords, allowed_domains, depth)
     insertion_result = finish_crawl_request(crawl_request, request_id, result)
