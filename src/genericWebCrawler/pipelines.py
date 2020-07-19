@@ -80,3 +80,8 @@ class KontanwebcrawlerPipeline(GenericwebcrawlerPipeline):
 class TempowebcrawlerPipeline(GenericwebcrawlerPipeline):
     mongo_collection = 'tempo'
     item_type = items.TempowebcrawlerItem
+
+
+class DetikwebcrawlerPipeline(GenericwebcrawlerPipeline):
+    mongo_collection = 'detik'
+    item_type = items.DetikwebcrawlerItem

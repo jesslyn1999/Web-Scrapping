@@ -86,7 +86,7 @@ def create_crawler_class():
             if type(item) is GenericwebcrawlerItem:
                 print('Urls haven\'t yet to be specifically handled: %s' %
                       item['URLNews'])
-            item['RequestId'] = [response.meta["request_id"]]
+            item['RequestId'] = response.meta["request_id"]
             yield item
 
         def clean_options(self):

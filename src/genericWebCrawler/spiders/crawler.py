@@ -52,7 +52,7 @@ def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth, 
     parserHelper.register(
         [parsers.BbcParser(), parsers.ItbParser(), parsers.KompasParser(), parsers.KompasianaParser(),
          parsers.KompasTvParser(), parsers.KontanParser(), parsers.CNNParser(), parsers.TempoParser(),
-         parsers.GenericParser()])
+         parsers.DetikParser(), parsers.GenericParser()])
 
     crawler_settings = Settings()
     crawler_settings.setmodule(local_settings)

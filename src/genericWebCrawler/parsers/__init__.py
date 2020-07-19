@@ -7,4 +7,5 @@ from .kompastv import *
 from .kontan import *
 from .cnn import *
 from .tempo import *
+from .detik import *
 

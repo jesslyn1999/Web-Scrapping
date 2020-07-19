@@ -70,12 +70,16 @@ class CNNwebcrawlerItem(GenericwebcrawlerItem):
 
 class TempowebcrawlerItem(GenericwebcrawlerItem):
     Time = scrapy.Field()
-    Source = scrapy.Field()
     TimeModified = scrapy.Field()
     Author = scrapy.Field()
     Editor = scrapy.Field()
     Description = scrapy.Field()
     Comments = scrapy.Field()
+
+
+class DetikwebcrawlerItem(GenericwebcrawlerItem):
+    Time = scrapy.Field()
+    Source = scrapy.Field()
 
 
 # Comments : [{

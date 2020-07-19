@@ -24,6 +24,7 @@ ITEM_PIPELINES = {
     'src.genericWebCrawler.pipelines.KompasTvwebcrawlerPipeline': 300,
     'src.genericWebCrawler.pipelines.KontanwebcrawlerPipeline': 300,
     'src.genericWebCrawler.pipelines.TempowebcrawlerPipeline': 300,
+    'src.genericWebCrawler.pipelines.DetikwebcrawlerPipeline': 300,
 }
 LOG_LEVEL = 'ERROR'
 
