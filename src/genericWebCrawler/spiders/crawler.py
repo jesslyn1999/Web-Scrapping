@@ -1,4 +1,5 @@
 from scrapy.crawler import CrawlerProcess
+import scrapy.crawler as crawler
 from scrapy.settings import Settings
 from .urlExtractor import create_crawler_class
 from src.genericWebCrawler import settings as local_settings
@@ -8,7 +9,8 @@ from db.db import crawl_result_collection, crawl_request_collection
 from db.models import CrawlResult, CrawlRequest
 import datetime
 from src.selenium import google_scraper
-
+from multiprocessing import Process, Queue
+from twisted.internet import reactor
 
 parserHelper = None  # exported
 
@@ -44,6 +46,26 @@ def finish_crawl_request(crawl_request, request_id, result):
 
 UrlExtractor, result = create_crawler_class()
 
+# the wrapper to make it run more times
+def run_spider(spider, crawler_settings, root_urls, allowed_domains, depth, request_id):
+    def f(q):
+        try:      
+            runner = crawler.CrawlerRunner(settings=crawler_settings)
+            deferred = runner.crawl(spider, root=root_urls, allow_domains=allowed_domains, depth=depth, request_id=request_id)
+            deferred.addBoth(lambda _: reactor.stop())
+            reactor.run()
+            q.put(None)
+        except Exception as e:
+            q.put(e)
+
+    q = Queue()
+    p = Process(target=f, args=(q,))
+    p.start()
+    result = q.get()
+    p.join()
+
+    if result is not None:
+        raise result
 
 def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth, stop_after_crawl=True):
     print("[*] Begin crawling", len(root_urls), "url(s)")
@@ -57,9 +79,7 @@ def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth, 
     crawler_settings = Settings()
     crawler_settings.setmodule(local_settings)
 
-    process = CrawlerProcess(settings=crawler_settings)  # ALT: CrawlerProcess(get_project_settings())
-    process.crawl(UrlExtractor, root=root_urls, allow_domains=allowed_domains, depth=depth, request_id=request_id)
-    process.start(stop_after_crawl=stop_after_crawl)  # the script will block here until the crawling is finished
+    run_spider(spider=UrlExtractor, crawler_settings=crawler_settings, root_urls=root_urls, allowed_domains=allowed_domains, depth=depth, request_id=request_id)
 
     print("[x] Finished crawling")
     return result
