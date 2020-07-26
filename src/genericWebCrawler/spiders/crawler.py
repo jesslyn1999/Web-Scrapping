@@ -1,16 +1,16 @@
-from scrapy.crawler import CrawlerProcess
 import scrapy.crawler as crawler
 from scrapy.settings import Settings
 from .urlExtractor import create_crawler_class
+from bson import ObjectId
+import datetime
+from multiprocessing import Process, Queue
+from twisted.internet import reactor
+from db.db import crawl_request_collection
+from db.models import CrawlRequest
 from src.genericWebCrawler import settings as local_settings
 from src.genericWebCrawler.parser import ParserHelper
 from src.genericWebCrawler import parsers
-from db.db import crawl_result_collection, crawl_request_collection
-from db.models import CrawlResult, CrawlRequest
-import datetime
 from src.selenium import google_scraper
-from multiprocessing import Process, Queue
-from twisted.internet import reactor
 
 parserHelper = None  # exported
 
@@ -28,44 +28,40 @@ def init_crawl_request(search_query, filter_keywords, root_urls_list):
     return crawl_request, str(inserted_request_id)
 
 
-def finish_crawl_request(crawl_request, request_id, result):
+def finish_crawl_request(crawl_request, request_id):
     crawl_request.TimeFinish = datetime.datetime.utcnow()
     crawl_request.State = "finish"
-    crawl_request_collection.update_one({'_id': request_id}, {"$set": crawl_request.__dict__})
-
-    db_results = []
-    for key in result:
-        db_results.append({
-            "URLPage": key,
-            "News": result[key]
-        })
-    crawl_result = CrawlResult(request_id, db_results)
-    insertion_result = crawl_result_collection.update({'Request': request_id}, crawl_result.__dict__, upsert=True)
-    return insertion_result
+    insertion_result = crawl_request_collection.update_one(
+        {'_id': ObjectId(request_id)}, {"$set": crawl_request.__dict__}
+    )
+    return insertion_result.raw_result
 
 
 UrlExtractor, result = create_crawler_class()
 
+# function helper for run_spider
+def run_reactor(crawler_settings, result_queue, spider, root_urls, allowed_domains, depth, request_id):
+    try:
+        runner = crawler.CrawlerRunner(settings=crawler_settings)
+        deferred = runner.crawl(spider, root=root_urls, allow_domains=allowed_domains, depth=depth,
+                                request_id=request_id)
+        deferred.addBoth(lambda _: reactor.stop())
+        reactor.run()
+        result_queue.put(None)
+    except Exception as e:
+        result_queue.put(e)
+
 # the wrapper to make it run more times
 def run_spider(spider, crawler_settings, root_urls, allowed_domains, depth, request_id):
-    def f(q):
-        try:      
-            runner = crawler.CrawlerRunner(settings=crawler_settings)
-            deferred = runner.crawl(spider, root=root_urls, allow_domains=allowed_domains, depth=depth, request_id=request_id)
-            deferred.addBoth(lambda _: reactor.stop())
-            reactor.run()
-            q.put(None)
-        except Exception as e:
-            q.put(e)
-
     q = Queue()
-    p = Process(target=f, args=(q,))
+    p = Process(target=run_reactor, args=(crawler_settings, q, spider, root_urls, allowed_domains, depth,
+                                request_id,))
     p.start()
-    result = q.get()
+    result_spider = q.get()
     p.join()
 
-    if result is not None:
-        raise result
+    if result_spider is not None:
+        raise result_spider
 
 def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth, stop_after_crawl=True):
     print("[*] Begin crawling", len(root_urls), "url(s)")
@@ -93,7 +89,7 @@ def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None
     root_urls_list = get_links_from_keyword(search_query, filter_keywords, max_page)
     crawl_request, request_id = init_crawl_request(search_query, filter_keywords, root_urls_list)
     result = begin_crawl(request_id, root_urls_list, filter_keywords, allowed_domains, depth)
-    insertion_result = finish_crawl_request(crawl_request, request_id, result)
+    insertion_result = finish_crawl_request(crawl_request, request_id)
 
     print("[x] Inserted Google scraping result", insertion_result)
     return result
@@ -102,7 +98,7 @@ def load_scraper_google(search_query, filter_keywords=None, allowed_domains=None
 def load_scraper(root_urls, filter_keywords=None, allowed_domains=None, depth=0):
     crawl_request, request_id = init_crawl_request(None, filter_keywords, root_urls)
     result = begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth)
-    insertion_result = finish_crawl_request(crawl_request, request_id, result)
+    insertion_result = finish_crawl_request(crawl_request, request_id)
 
     print("[x] Inserted URL scraping result", insertion_result)
     return result
