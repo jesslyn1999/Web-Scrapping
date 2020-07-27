@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 from src.genericWebCrawler.items import GenericwebcrawlerItem
 from src.genericWebCrawler.spiders import crawler
 
+Token.set_extension("tag", default=False)
 
 class UrlExtractor(Spider):
     name = "url-extractor"
@@ -16,7 +17,6 @@ class UrlExtractor(Spider):
     result = {}
 
     def __init__(self, root=None, depth=0, *args, **kwargs):
-        Token.set_extension("tag", default=False)
         self.logger.info(
             "[LE] Source: %s Depth: %s Args : %s Kwargs: %s", root, depth, args, kwargs)
         self.options = kwargs
