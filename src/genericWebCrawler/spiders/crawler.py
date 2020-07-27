@@ -85,12 +85,6 @@ def begin_crawl(request_id, root_urls, filter_keywords, allowed_domains, depth, 
     print("[x] Finished crawling")
     return result
 
-
-def spider_output(output):
-    print("entered")
-    print("output")
-
-
 def get_links_from_keyword(search_query, filter_keywords="", max_page=5):
     print("[*] Acquiring links from Google")
     root_urls_list = google_scraper.get_google_search_results_link(
