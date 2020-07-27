@@ -3,8 +3,6 @@ from scrapy.settings import Settings
 from .urlExtractor import create_crawler_class
 from bson import ObjectId
 import datetime
-from multiprocessing import Process, Queue
-from twisted.internet import reactor
 from db.db import crawl_request_collection
 from db.models import CrawlRequest
 from src.genericWebCrawler import settings as local_settings
@@ -43,18 +41,6 @@ def finish_crawl_request(crawl_request, request_id):
 
 
 UrlExtractor, result = create_crawler_class()
-
-# function helper for run_spider
-def run_reactor(crawler_settings, result_queue, spider, root_urls, allowed_domains, depth, request_id):
-    try:
-        runner = crawler.CrawlerRunner(settings=crawler_settings)
-        deferred = runner.crawl(spider, root=root_urls, allow_domains=allowed_domains, depth=depth,
-                                request_id=request_id)
-        deferred.addBoth(lambda _: reactor.stop())
-        reactor.run()
-        result_queue.put(None)
-    except Exception as e:
-        result_queue.put(e)
 
 # the wrapper to make it run more times
 @wait_for(timeout=900.0)
