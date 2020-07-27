@@ -68,6 +68,7 @@ def message_received(channel, message_body):
                              request_id=request_id, keywords=keywords, allowed_domains=allowed_domains, depth=depth)
 
 def main():
+    print("[*] Starting up RabbitMQ listener...")
     rabbitmq_url = os.getenv('RABBITMQ_URL')
     connection_params = pika.URLParameters(rabbitmq_url)
     connection = pika.BlockingConnection(parameters=connection_params)
