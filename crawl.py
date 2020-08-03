@@ -30,8 +30,11 @@ def start_scraping_job(
 # if __name__ == "__main__":
 #     load_scraper("https://bola.tempo.co/read/1361349/menang-telak-5-2-manchester-united-geser-chelsea-di-posisi-4/full&view=ok", filter_keywords="pilkada, 2020", depth=0)
 
-if __name__ == "__main__":
-    load_scraper("https://news.detik.com/berita/d-5081309/pengacara-pastikan-denny-siregar-akan-penuhi-pangilan-polisi?_ga=2.61665452.1458690852.1593938311-249100007.1584667622", filter_keywords="pilkada, 2020", depth=0)
+# if __name__ == "__main__":
+#     load_scraper("https://news.detik.com/berita/d-5081309/pengacara-pastikan-denny-siregar-akan-penuhi-pangilan-polisi?_ga=2.61665452.1458690852.1593938311-249100007.1584667622", filter_keywords="pilkada, 2020", depth=0)
 
 # if __name__ == "__main__":
 #     load_scraper("https://gaya.tempo.co/read/1361609/ramai-kalung-antivirus-corona-cek-harganya-di-pasaran", filter_keywords="corona", depth=0)
+
+if __name__ == "__main__":
+    load_scraper("https://news.detik.com/berita/d-5118071/paspor-djoko-tjandra-disoal-yasonna-sebut-penerbitannya-sudah-sesuai-uu?tag_from=news_mostpop", filter_keywords="pilkada, 2020", depth=0)

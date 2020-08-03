@@ -80,6 +80,8 @@ class TempowebcrawlerItem(GenericwebcrawlerItem):
 class DetikwebcrawlerItem(GenericwebcrawlerItem):
     Time = scrapy.Field()
     Source = scrapy.Field()
+    Comments = scrapy.Field()
+    Reactions = scrapy.Field()
 
 
 # Comments : [{

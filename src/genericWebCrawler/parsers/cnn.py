@@ -2,10 +2,10 @@ from bs4 import BeautifulSoup
 from spacy.lang.en import English
 from src.genericWebCrawler.items import CNNwebcrawlerItem
 from src.genericWebCrawler.parsers.generic import GenericParser
-
 import re
 import requests
-
+import traceback
+import sys
 
 class CNNParser(GenericParser):
     domain_name = "*cnnindonesia.com"
@@ -24,87 +24,7 @@ class CNNParser(GenericParser):
         self._item["Body"] = []
         self._item["FollowLinks"] = list(
             self.get_all_links(response, keywords))
-        # Comment scraping section:
 
-        articleId = bsoup.find("meta", {"name": "articleid"})["content"]
-        query = """
-        { 
-        search(type: "comment",size: 10 ,page:1,sort:"newest", adsLabelKanal: "cnn_nasional", adsEnv: "desktop", query: [{name: "news.artikel", terms: "%s" } , {name: "news.site", terms: "cnn"} ]) { 
-            paging 
-            sorting 
-            counter 
-            counterparent 
-            profile 
-            hits { 
-            posisi 
-            hasAds 
-            results { 
-                id 
-                author 
-                content 
-                like 
-                prokontra 
-                status 
-                news 
-                create_date 
-                pilihanredaksi 
-                refer 
-                liker { 
-                id 
-                } 
-                reporter { 
-                id 
-                status_report 
-                } 
-                child { 
-                id 
-                child 
-                parent 
-                author 
-                content 
-                like 
-                prokontra 
-                status 
-                create_date 
-                pilihanredaksi 
-                refer 
-                liker { 
-                    id 
-                } 
-                reporter { 
-                    id 
-                    status_report 
-                } 
-                authorRefer  
-                }  
-            }  
-            }  
-        }  
-        }""" % articleId
-
-        r = requests.get("https://newcomment.detik.com/graphql",
-                         params={
-                             "query": query
-                         })
-
-        results = r.json()
-
-        try:
-            commentArray = [t for t in results["data"]
-                            ["search"]["hits"]["results"]]
-            self._item["Comments"] = []
-
-            for comment in commentArray:
-                if(comment["status"] == None):
-                    continue
-                temp_dict = {}
-                temp_dict["Author"] = comment['author']['name']
-                temp_dict["Content"] = comment['content']
-                temp_dict["Likes"] = comment['like']
-                self._item["Comments"].append(temp_dict)
-            # Comment scraping section end
-        except TypeError:
-            pass
 
         try:
             temp_read_time = bsoup.find(
@@ -121,6 +41,89 @@ class CNNParser(GenericParser):
                 "Name": temp_author.get_text(), "URLProfile": temp_author.get('href')}
             self._item["Editor"] = {
                 "Name": temp_editor.get_text(), "URLProfile": temp_editor.get('href')}
+            # Comment scraping section:
+            self._item["Comments"] = []
+            try:
+                # GraphQL Comment API
+                articleId = bsoup.find("meta", {"name": "articleid"})["content"]
+                params = """
+                { 
+                search(type: "comment",size: 10 ,page:1,sort:"newest", adsLabelKanal: "cnn_nasional", adsEnv: "desktop", query: [{name: "news.artikel", terms: "%s" } , {name: "news.site", terms: "cnn"} ]) { 
+                    paging 
+                    sorting 
+                    counter 
+                    counterparent 
+                    profile 
+                    hits { 
+                    posisi 
+                    hasAds 
+                    results { 
+                        id 
+                        author 
+                        content 
+                        like 
+                        prokontra 
+                        status 
+                        news 
+                        create_date 
+                        pilihanredaksi 
+                        refer 
+                        liker { 
+                        id 
+                        } 
+                        reporter { 
+                        id 
+                        status_report 
+                        } 
+                        child { 
+                        id 
+                        child 
+                        parent 
+                        author 
+                        content 
+                        like 
+                        prokontra 
+                        status 
+                        create_date 
+                        pilihanredaksi 
+                        refer 
+                        liker { 
+                            id 
+                        } 
+                        reporter { 
+                            id 
+                            status_report 
+                        } 
+                        authorRefer  
+                        }  
+                    }  
+                    }  
+                }  
+                }""" % articleId
+
+                response_ = requests.get("https://newcomment.detik.com/graphql",
+                                params={
+                                    "query": params
+                                })
+
+                results = response_.json()
+
+            
+                commentArray = [t for t in results["data"]
+                                ["search"]["hits"]["results"]]
+
+                for comment in commentArray:
+                    if(comment["status"] == None):
+                        continue
+                    temp_dict = {}
+                    temp_dict["Author"] = comment['author']['name']
+                    temp_dict["Content"] = comment['content']
+                    temp_dict["Likes"] = comment['like']
+                    self._item["Comments"].append(temp_dict)
+            except Exception as e:
+                print("error type: " + str(e))
+                print(traceback.format_exc())
+            # Comment scraping section end
         except AttributeError:
             pass
 

@@ -4,6 +4,8 @@ from src.genericWebCrawler.items import TempowebcrawlerItem
 import requests
 import dateparser
 import json
+import traceback
+import sys
 
 FACEBOOK_GRAPH_API_ACCESS_TOKEN = "EAALSGqipwgUBAJp8sgrOwxNZClmCqaxJl8Yu206ZAZAQ4B4ytGY9mvrUqsQZAhXfiWFvKjUM9gA53AIJ65tVBcvW1jZANRAhCkZAZBZCRoWzxmDdeGlWYYVUilZCMNijxhD7X4XZBvwdmZCjilPpGFAyA1PDZCIHwPBuJRA1Sgblvnhy7QZDZD"
 
@@ -35,27 +37,33 @@ class TempoParser(GenericParser):
         self._item["Body"] = []
 
         # comment scraping section:
-        articleURL = bsoup.find('link', {"rel": "original-source"})["href"]
-
-        r = requests.get("https://graph.facebook.com/v2.6/",
-                         params={
-                             "fields": "og_object{comments}",
-                             "id": "https://gaya.tempo.co/read/1361609/ramai-kalung-antivirus-corona-cek-harganya-di-pasaran",
-                             "access_token": FACEBOOK_GRAPH_API_ACCESS_TOKEN
-                         })
-        results = r.json()
-
+        self._item["Comments"] = []
         try:
-            self._item["Comments"] = []
-            data = results["og_object"]["comments"]["data"]
-            for comment in data:
-                temp_dict = {}
-                temp_dict["Name"] = comment['from']['name']
-                temp_dict["Content"] = comment['message']
-                temp_dict["Date"] = time_gmt_format(comment['created_time'])
-                self._item["Comments"].append(temp_dict)
-        except AttributeError as e:
-            print(e)
+            # Facebook Comment API
+            articleURL = bsoup.find('link', {"rel": "original-source"})["href"]
+
+            r = requests.get("https://graph.facebook.com/v2.6/",
+                            params={
+                                "fields": "og_object{comments}",
+                                "id": "https://gaya.tempo.co/read/1361609/ramai-kalung-antivirus-corona-cek-harganya-di-pasaran",
+                                "access_token": FACEBOOK_GRAPH_API_ACCESS_TOKEN
+                            })
+            results = r.json()
+
+            try:   
+                data = results["og_object"]["comments"]["data"]
+                for comment in data:
+                    temp_dict = {}
+                    temp_dict["Name"] = comment['from']['name']
+                    temp_dict["Content"] = comment['message']
+                    temp_dict["Date"] = time_gmt_format(comment['created_time'])
+                    self._item["Comments"].append(temp_dict)
+            except AttributeError as e:
+                print(e)
+        except Exception as e:
+            print("error type: " + str(e))
+            print(traceback.format_exc())
+        # Comment scraping section end
         
         try:
             self._item["Title"] = temp_content_json["headline"]

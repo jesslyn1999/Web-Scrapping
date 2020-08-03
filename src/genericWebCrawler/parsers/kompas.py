@@ -3,7 +3,8 @@ from src.genericWebCrawler.parsers.generic import GenericParser
 from src.genericWebCrawler.items import KompaswebcrawlerItem
 import requests
 import dateparser
-
+import traceback
+import sys
 
 def time_gmt_format(str_datetime):
     # from string like "11/06/2020, 13:45 WIB" to GMT yyyymmddhhmmss
@@ -32,26 +33,6 @@ class KompasParser(GenericParser):
         try:
             self._item["Title"] = bsoup.find("h1", {"class": "read__title"}).get_text()
 
-            # Comment scraping section:
-            self._item["Comments"] = []
-            commentAPIURL = "https://apis.kompas.com/api/comment/list"
-            r = requests.get(commentAPIURL,
-                             params={
-                                 "urlpage": response.meta["url"],
-                                 "json": "",
-                                 "limit": 1000
-                             })
-            results = r.json()
-            commentArray = [t for t in results['result']['komentar']]
-            for x in commentArray:
-                temp_dict = {}
-                temp_dict["Author"] = x['user_fullname']
-                temp_dict["Content"] = x['comment_text']
-                temp_dict["Likes"] = x['num_like']
-                temp_dict['Dislikes'] = x['num_dislike']
-                self._item["Comments"].append(temp_dict)
-            # Comment scraping section end
-
             temp_read_time = bsoup.find(
                 "div", {"class": "read__time"}).get_text().split('-')
             if len(temp_read_time) == 2:
@@ -68,6 +49,31 @@ class KompasParser(GenericParser):
                 "Name": temp_author.get_text(), "URLProfile": temp_author.get('href')}
             self._item["Editor"] = {
                 "Name": temp_editor.get_text(), "URLProfile": temp_editor.get('href')}
+
+            # Comment scraping section:
+            self._item["Comments"] = []
+            try:
+                # Kompas Custom Comment API  
+                commentAPIURL = "https://apis.kompas.com/api/comment/list"
+                r = requests.get(commentAPIURL,
+                                params={
+                                    "urlpage": response.meta["url"],
+                                    "json": "",
+                                    "limit": 1000
+                                })
+                results = r.json()
+                commentArray = [t for t in results['result']['komentar']]
+                for x in commentArray:
+                    temp_dict = {}
+                    temp_dict["Author"] = x['user_fullname']
+                    temp_dict["Content"] = x['comment_text']
+                    temp_dict["Likes"] = x['num_like']
+                    temp_dict['Dislikes'] = x['num_dislike']
+                    self._item["Comments"].append(temp_dict)
+            except Exception as e:
+                print("error type: " + str(e))
+                print(traceback.format_exc())
+            # Comment scraping section end
         except AttributeError:
             pass
 
